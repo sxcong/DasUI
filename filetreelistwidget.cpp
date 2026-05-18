@@ -528,46 +528,102 @@ void FileTreeListWidget::setupStylesheetText() {
 void FileTreeListWidget::setupStylesheetText_vscode()
 {
     QString qss = R"(
-/* 1. 作用于整个树控件（底色与右侧表格稍微呼应，但更暗一点） */
+#widget_left {
+    background-color: #151522;
+    /* 核心修复：干掉左边、顶部的多余内边距，让内容完美靠边 */
+    padding: 0px;
+    border: none;
+}
+/* ===================================================================
+   1. 树状图基础配置
+   =================================================================== */
 QTreeWidget {
-    background-color: #151522; /* 方案一的深蓝黑，或改成 #1E1E1E 炭黑 */
+    background-color: #151522;
     color: #C0C0C0;
     border: none;
     font-size: 13px;
+    /* 核心：彻底关闭 Qt 自带的键盘焦点虚线框，防止点击时产生像素级虚线 */
+    outline: 0px;
 }
 
-/* 2. 核心修复：必须同时显式重置 branch 和 item 的背景 */
+/* ===================================================================
+   2. 树状图分支区域 (Branch) 终极多状态对齐
+   =================================================================== */
+
+/* 默认状态：完全透明 */
 QTreeWidget::branch {
-    background-color: transparent; /* 强行让左侧分支线和箭头区域背景透明 */
+    background-color: transparent;
+    border: none;
 }
 
-QTreeWidget::item {
-    background-color: transparent; /* 默认节点行背景透明，跟随树的整体背景 */
-    color: #C0C0C0;
-    padding: 6px 4px; /* 增加呼吸间距 */
-    border-bottom: 1px solid #1A1A2A; /* 淡淡的水平分割线，让列表更有秩序 */
+/* 核心修复：全状态同步！
+   不管它是普通的 selected、带有焦点的 selected:active、还是没有焦点的 selected:!active，
+   只要是选中状态，左边空腔必须无条件填充与右边 item 一模一样的亮蓝色 (#2A5A8A) */
+QTreeWidget::branch:selected,
+QTreeWidget::branch:selected:active,
+QTreeWidget::branch:selected:!active {
+    background-color: #2A5A8A;
+    border: none;
 }
 
-/* 3. 鼠标悬停状态（只改变 item 区域，防止支线跟着变色混乱） */
-QTreeWidget::item:hover {
-    background-color: #2A4A6A; /* 悬停蓝灰色 */
-    color: #FFFFFF;
-}
-
-/* 4. 选中状态 */
-QTreeWidget::item:selected {
-    background-color: #2A5A8A; /* 亮蓝色选中状态 */
-    color: #FFFFFF;
-    font-weight: bold;
-}
-
-/* 5. 可选高级微调：如果悬停或选中时，左边小箭头区域也想跟着变色，可以这样追加： */
+/* 悬停状态同步：防止鼠标划过时出现颜色断层 */
 QTreeWidget::branch:hover {
     background-color: #2A4A6A;
+    border: none;
 }
-QTreeWidget::branch:selected {
+
+/* ===================================================================
+   3. 移除所有潜在的虚线连接线机制
+   =================================================================== */
+QTreeWidget::branch:has-children:closed,
+QTreeWidget::branch:has-children:open,
+QTreeWidget::branch:has-siblings,
+QTreeWidget::branch:no-siblings {
+    /* 强行把子节点之间、兄弟节点之间的物理边界清空为0 */
+    border: none;
+    background-image: none; /* 有些旧版 Qt 默认会用图片画虚线，这里直接干掉 */
+}
+
+/* ===================================================================
+   4. 节点内容区域 (Item) 的状态确保
+   =================================================================== */
+QTreeWidget::item {
+    background-color: transparent;
+    color: #C0C0C0;
+    padding: 6px 4px;
+    border-bottom: 1px solid #1A1A2A;
+}
+
+/* 点击/选中时的 Item 状态，同样要确保 outline 为空 */
+QTreeWidget::item:selected,
+QTreeWidget::item:selected:active,
+QTreeWidget::item:selected:!active {
     background-color: #2A5A8A;
+    color: #FFFFFF;
+    font-weight: bold;
+    border: none;
 }
+
+/* 这是分割条容器本身的背景色 - 设为极深色，形成 1px 的内嵌阴影线 */
+QSplitter::handle {
+    background-color: #10101A;
+}
+
+/* 当分割条是横向（Horizontal）时，控制它的宽度 */
+QSplitter::handle:horizontal {
+    width: 3px; /* 不要太宽，3-4 像素最精致。原生的太粗了 */
+    /* 玩法 A (隐形流)：直接 background: #151522; 让它与树同色 */
+    /* 玩法 B (科技线流)：给它中间画一根淡淡的垂直分隔线，如下： */
+    background-color: #151522;
+    border-right: 1px solid #252535;
+}
+
+/* 交互加分项：当鼠标悬停在分割条上准备拖动时，让它微微亮起，提示用户“我可拖动” */
+QSplitter::handle:horizontal:hover {
+    background-color: #2A5A8A; /* 亮起为你系统的主题蓝色 */
+}
+
+
         )";
     this->setStyleSheet(qss);
 }

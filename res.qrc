@@ -35,7 +35,6 @@
         <file>res/struct/perforate.png</file>
         <file>res/images/table.png</file>
         <file>res/images/btn_table.png</file>
-        <file>res/images/logo_big_white.png</file>
         <file>res/title/title_gray.png</file>
         <file>res/title/subtitile.png</file>
         <file>res/images/lightconfig.png</file>
@@ -50,5 +49,18 @@
         <file>res/chart_button/锁x轴_点.png</file>
         <file>res/chart_button/锁y轴.png</file>
         <file>res/chart_button/下载.png</file>
+        <file>res/png/curveproduct.png</file>
+        <file>res/png/das.png</file>
+        <file>res/png/database.png</file>
+        <file>res/png/datarootnode.png</file>
+        <file>res/png/datatree.png</file>
+        <file>res/png/dts.png</file>
+        <file>res/png/horizongroup.png</file>
+        <file>res/png/import.png</file>
+        <file>res/png/Option.png</file>
+        <file>res/png/saveas.png</file>
+        <file>res/png/seisroot.png</file>
+        <file>res/png/seisroots.png</file>
+        <file>res/png/well.png</file>
     </qresource>
 </RCC>
