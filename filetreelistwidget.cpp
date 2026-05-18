@@ -524,68 +524,91 @@ void FileTreeListWidget::setupStylesheetText() {
         )";
     this->setStyleSheet(qss);
 }
-
 void FileTreeListWidget::setupStylesheetText_vscode()
 {
-    QString qss = R"(
+    // 核心黑科技：一张 16x16 像素、完全透明的 Base64 隐形 PNG 图片数据
+    // 它可以强制替代系统自带的任何加号、减号、方块和物理连线。
+    QString transparentImage = "url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAD0lEQVQ4y2NgGAWjYBQgAAARQAAB71v1CgAAAABJRU5ErkJggg==)";
+
+    QString qss = QString(R"(
+/* ===================================================================
+   1. 外部容器与树状图基础配置
+   =================================================================== */
 #widget_left {
     background-color: #151522;
-    /* 核心修复：干掉左边、顶部的多余内边距，让内容完美靠边 */
     padding: 0px;
     border: none;
 }
-/* ===================================================================
-   1. 树状图基础配置
-   =================================================================== */
+
 QTreeWidget {
     background-color: #151522;
     color: #C0C0C0;
     border: none;
     font-size: 13px;
-    /* 核心：彻底关闭 Qt 自带的键盘焦点虚线框，防止点击时产生像素级虚线 */
-    outline: 0px;
+    outline: 0px; /* 彻底关闭 Qt 键盘焦点虚线框 */
 }
 
 /* ===================================================================
-   2. 树状图分支区域 (Branch) 终极多状态对齐
+   2. 树状图分支区域 (Branch) 地毯式无死角隐形（防父级污染）
    =================================================================== */
 
-/* 默认状态：完全透明 */
+/* 默认基础状态：不管选没选中、有没有子节点，无条件使用透明隐形图占位 */
 QTreeWidget::branch {
     background-color: transparent;
     border: none;
+    image: %1; /* 强制覆盖系统粗加减号、粗方块 */
 }
 
-/* 核心修复：全状态同步！
-   不管它是普通的 selected、带有焦点的 selected:active、还是没有焦点的 selected:!active，
-   只要是选中状态，左边空腔必须无条件填充与右边 item 一模一样的亮蓝色 (#2A5A8A) */
-QTreeWidget::branch:selected,
-QTreeWidget::branch:selected:active,
-QTreeWidget::branch:selected:!active {
-    background-color: #2A5A8A;
+/* 覆盖所有可能导致小方块复现的细分组合伪类 */
+QTreeWidget::branch:has-children,
+QTreeWidget::branch:has-children:closed,
+QTreeWidget::branch:has-children:open,
+QTreeWidget::branch:has-children:!selected,
+QTreeWidget::branch:has-children:closed:!selected,
+QTreeWidget::branch:has-children:open:!selected {
+    background-color: transparent;
     border: none;
+    image: %1;
 }
 
-/* 悬停状态同步：防止鼠标划过时出现颜色断层 */
+/* --- 核心状态同步：当【有子节点】(如“数据”根节点) 被选中时（含活动与非活动状态） --- */
+QTreeWidget::branch:has-children:closed:selected,
+QTreeWidget::branch:has-children:closed:selected:active,
+QTreeWidget::branch:has-children:closed:selected:!active,
+QTreeWidget::branch:has-children:open:selected,
+QTreeWidget::branch:has-children:open:selected:active,
+QTreeWidget::branch:has-children:open:selected:!active {
+    background-color: #2A5A8A; /* 同步染成高亮亮蓝 */
+    border: none;
+    image: %1;
+}
+
+/* --- 核心状态同步：当【没有子节点】(如“井信息”、“DAS监控”) 被选中时（防止左侧断色漏黑） --- */
+QTreeWidget::branch:!has-children:selected,
+QTreeWidget::branch:!has-children:selected:active,
+QTreeWidget::branch:!has-children:selected:!active {
+    background-color: #2A5A8A; /* 子节点左侧空腔也必须同步染成亮蓝 */
+    border: none;
+    image: %1;
+}
+
+/* 鼠标悬停状态同步（无论有无子节点） */
 QTreeWidget::branch:hover {
     background-color: #2A4A6A;
     border: none;
+    image: %1;
 }
 
-/* ===================================================================
-   3. 移除所有潜在的虚线连接线机制
-   =================================================================== */
-QTreeWidget::branch:has-children:closed,
-QTreeWidget::branch:has-children:open,
+/* 彻底移除任何潜在的物理连线图层占位 */
 QTreeWidget::branch:has-siblings,
 QTreeWidget::branch:no-siblings {
-    /* 强行把子节点之间、兄弟节点之间的物理边界清空为0 */
     border: none;
-    background-image: none; /* 有些旧版 Qt 默认会用图片画虚线，这里直接干掉 */
+    image: %1;
+    background-image: none;
 }
 
 /* ===================================================================
-   4. 节点内容区域 (Item) 的状态确保
+   3. 节点内容区域 (Item) 状态对齐
    =================================================================== */
 QTreeWidget::item {
     background-color: transparent;
@@ -594,7 +617,7 @@ QTreeWidget::item {
     border-bottom: 1px solid #1A1A2A;
 }
 
-/* 点击/选中时的 Item 状态，同样要确保 outline 为空 */
+/* 确保 Item 选中、非活动选中时，背景与 Branch 严格一致 */
 QTreeWidget::item:selected,
 QTreeWidget::item:selected:active,
 QTreeWidget::item:selected:!active {
@@ -604,26 +627,28 @@ QTreeWidget::item:selected:!active {
     border: none;
 }
 
-/* 这是分割条容器本身的背景色 - 设为极深色，形成 1px 的内嵌阴影线 */
+QTreeWidget::item:hover {
+    background-color: #2A4A6A;
+    color: #FFFFFF;
+}
+
+/* ===================================================================
+   4. 分割条 (QSplitter) 精细化美化
+   =================================================================== */
 QSplitter::handle {
     background-color: #10101A;
 }
 
-/* 当分割条是横向（Horizontal）时，控制它的宽度 */
 QSplitter::handle:horizontal {
-    width: 3px; /* 不要太宽，3-4 像素最精致。原生的太粗了 */
-    /* 玩法 A (隐形流)：直接 background: #151522; 让它与树同色 */
-    /* 玩法 B (科技线流)：给它中间画一根淡淡的垂直分隔线，如下： */
+    width: 3px;
     background-color: #151522;
     border-right: 1px solid #252535;
 }
 
-/* 交互加分项：当鼠标悬停在分割条上准备拖动时，让它微微亮起，提示用户“我可拖动” */
 QSplitter::handle:horizontal:hover {
-    background-color: #2A5A8A; /* 亮起为你系统的主题蓝色 */
+    background-color: #2A5A8A;
 }
+    )").arg(transparentImage); // 使用 .arg() 把隐形图动态塞进 QSS
 
-
-        )";
     this->setStyleSheet(qss);
 }

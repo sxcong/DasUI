@@ -62,5 +62,7 @@
         <file>res/png/seisroot.png</file>
         <file>res/png/seisroots.png</file>
         <file>res/png/well.png</file>
+        <file>res/png/arrow_down.png</file>
+        <file>res/png/arrow_right.png</file>
     </qresource>
 </RCC>
