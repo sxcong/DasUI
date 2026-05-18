@@ -1,0 +1,54 @@
+<RCC>
+    <qresource prefix="/images"/>
+    <qresource prefix="/res"/>
+    <qresource prefix="/">
+        <file>res/title/title.png</file>
+        <file>res/title/title_bk.png</file>
+        <file>res/title/btn_close.png</file>
+        <file>res/title/btn_close_hover.png</file>
+        <file>res/title/btn_max.png</file>
+        <file>res/title/btn_max_hover.png</file>
+        <file>res/title/btn_min.png</file>
+        <file>res/title/btn_min_hover.png</file>
+        <file>res/title/btn_setting.png</file>
+        <file>res/title/btn_user.png</file>
+        <file>res/title/tBtn_AlarmQuery.png</file>
+        <file>res/title/tBtn_DataAnalysis.png</file>
+        <file>res/images/secbtn_close.png</file>
+        <file>res/images/secsetting.png</file>
+        <file>res/colors_tree.txt</file>
+        <file>res/images/color.png</file>
+        <file>res/images/progressbar.png</file>
+        <file>res/title/close.png</file>
+        <file>res/title/close2.png</file>
+        <file>res/title/btn_middle.png</file>
+        <file>res/title/btn_middle_hover.png</file>
+        <file>res/title/maxico.png</file>
+        <file>res/title/minico.png</file>
+        <file>res/title/tBtn_Config.png</file>
+        <file>res/title/tBtn_History.png</file>
+        <file>res/images/stackflow.png</file>
+        <file>res/title/tBtn_FFTData.png</file>
+        <file>res/struct/equipment.png</file>
+        <file>res/struct/ground.png</file>
+        <file>res/struct/output.png</file>
+        <file>res/struct/perforate.png</file>
+        <file>res/images/table.png</file>
+        <file>res/images/btn_table.png</file>
+        <file>res/images/logo_big_white.png</file>
+        <file>res/title/title_gray.png</file>
+        <file>res/title/subtitile.png</file>
+        <file>res/images/lightconfig.png</file>
+        <file>res/images/wait.gif</file>
+        <file>res/chart_button/后退.png</file>
+        <file>res/chart_button/后退_选中.png</file>
+        <file>res/chart_button/配置.png</file>
+        <file>res/chart_button/前进.png</file>
+        <file>res/chart_button/前进_选中.png</file>
+        <file>res/chart_button/刷新.png</file>
+        <file>res/chart_button/锁x轴.png</file>
+        <file>res/chart_button/锁x轴_点.png</file>
+        <file>res/chart_button/锁y轴.png</file>
+        <file>res/chart_button/下载.png</file>
+    </qresource>
+</RCC>

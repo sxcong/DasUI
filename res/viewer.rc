@@ -1,0 +1,31 @@
+//IDI_ICON1 ICON DISCARDABLE "images/logo.ico"
+#include "winver.h"
+
+VS_VERSION_INFO VERSIONINFO
+ FILEVERSION    2022,06,28,09
+ PRODUCTVERSION 1,1,13
+ FILEFLAGS      0x0L
+ FILEFLAGSMASK  0x3fL
+ FILEOS         VOS_NT_WINDOWS32
+ FILETYPE       VFT_APP
+ FILESUBTYPE    VFT2_UNKNOWN
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "000004b0"
+        BEGIN
+            VALUE "CompanyName", "Huiangu"
+            VALUE "FileDescription", ""
+            VALUE "FileVersion", "1.1.13"
+            VALUE "LegalCopyright", "Copyright 2017-2022 Huiangu Inc. All Rights Reserved."
+            VALUE "InternalName", "HDAS"
+            VALUE "OriginalFilename", "HDAS"
+            VALUE "ProductName", "HDAS"
+            VALUE "ProductVersion", "1.1.13"
+        END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation", 0x0, 1200
+    END
+END
