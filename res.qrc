@@ -64,5 +64,16 @@
         <file>res/png/well.png</file>
         <file>res/png/arrow_down.png</file>
         <file>res/png/arrow_right.png</file>
+        <file>res/png/cloud-machine.png</file>
+        <file>res/png/comment-lines.png</file>
+        <file>res/png/linechart.png</file>
+        <file>res/png/recyclebin.png</file>
+        <file>res/png/resource.png</file>
+        <file>res/png/speed.png</file>
+        <file>res/png/terminal-fill.png</file>
+        <file>res/png/left-fill.png</file>
+        <file>res/png/pause.png</file>
+        <file>res/png/play.png</file>
+        <file>res/png/stop.png</file>
     </qresource>
 </RCC>

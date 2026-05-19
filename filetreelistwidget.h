@@ -130,16 +130,15 @@ private:
     void createNewTab(const QString &title, const QString &path);
     void setupContextMenu(QTableWidget* table);
 
-    void setupStylesheetText();
-    void setupStylesheetText_vscode();
+
+    void initCardList();
+    QWidget* createCustomRowWidget(const QString &fileName, const QString &fileSize, const QString &fileTime);
 private slots:
     void onTreeItemClicked(QTreeWidgetItem *item, int column);
     void showTreeContextMenu(const QPoint &pos);
     void showGeneralContextMenu(QTableWidget* table, const QPoint &pos);
     void importFolder();
 
-protected:
-    bool eventFilter(QObject *obj, QEvent *event) override;
 private:
     Ui::FileTreeListWidget *ui;
     QTabWidget* tabWidget;
