@@ -25,7 +25,8 @@ font: 12pt "宋体";
 
 
 QMainWindow#MainWindow{
-background: rgb(20, 20, 20);
+/*background: rgb(20, 20, 20);*/
+background: #1E2126;
 }
 
 QDialog{
@@ -34,7 +35,8 @@ background: rgb(21, 46, 84);
 
 QStackedWidget
 {
-background: rgb(21, 46, 84);
+/*background: rgb(21, 46, 84); 蓝色*/
+background-color: #141519; /*RGB(18, 20, 24) 暗黑*/
 }
 
 
@@ -85,9 +87,6 @@ background-color:#444444;
 
 /*自定义控件*/
 QWidget#widget_liebiao{background-color: rgb(31, 41, 62);}
-
-
-
 
 
 
@@ -496,17 +495,25 @@ border-image:url(:/qss/blacksoft/branch_close.png);
 }
 
 QTreeView,QListView,QTableView,QSplitter::handle,QTreeView::branch{
-background:#444444;
+/*background:#444444;*/
+background:#141519;
 }
 
 QTableView::item:selected,QListView::item:selected,QTreeView::item:selected{
 color:#DCDCDC;
-background:#383838;
+/*background:#383838;*/
+background:#2E436E;
 }
 
 QTableView::item:hover,QListView::item:hover,QTreeView::item:hover,QHeaderView,QHeaderView::section,QTableCornerButton:section{
 color:#DCDCDC;
-background:#525252;
+/*background:#525252;*/
+background:#252627;
+}
+
+QTreeView::item:selected:hover {
+    background-color: #2E436E;
+    color: #FFFFFF;
 }
 
 QTableView::item,QListView::item,QTreeView::item{
@@ -729,3 +736,37 @@ background:none;
 /*DarkColorStart:#646464*/
 /*DarkColorEnd:#525252*/
 /*HighColor:#AAAAAA*/
+
+
+
+/*gemini推荐配色*/
+/*
+ QWidget#widget_right {
+    background-color: #121418;
+    color: #E0E6ED;
+    font-family: "Segoe UI", "Roboto Mono", sans-serif;
+    border: 2px solid red; /* 如果看到红框，说明样式加载了，只是背景色未渲染 */
+}*/
+/* 表格样式 */
+QTableView {
+    background-color: #1C2026;
+    gridline-color: #2C3440;
+    border: none;
+}
+
+/* 选中项样式 */
+QTableView::item:selected {
+    background-color: #252C36;
+    border-left: 3px solid #3498DB; /* 工业风核心：左侧高亮条 */
+}
+
+/* 表头优化 */
+
+QHeaderView::section {
+    background-color: #16191D;
+    color: #95A5A6;
+    padding: 8px;
+    border: none;
+    border-bottom: 2px solid #34495E;
+}
+/*gemini推荐配色结束*/

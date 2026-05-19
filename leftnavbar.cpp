@@ -30,6 +30,7 @@ LeftNavBar::LeftNavBar(QWidget *parent)
     // 加一条淡淡的分割线
     QWidget *line = new QWidget(this);
     line->setFixedHeight(1);
+    //line->setStyleSheet("background-color: #1a1a1a; margin: 5px 10px;");
     line->setStyleSheet("background-color: #1a1a1a; margin: 5px 10px;");
     mainLayout->addWidget(line);
 
@@ -75,8 +76,6 @@ LeftNavBar::LeftNavBar(QWidget *parent)
         setStyleSheet(qss);
         qssFile.close();
     }
-
-    //setupStylesheetText();
 }
 
 LeftNavBar::~LeftNavBar()
@@ -132,80 +131,6 @@ void LeftNavBar::paintEvent(QPaintEvent *event) {
     QWidget::paintEvent(event); // 保留父类原有的绘制
 }
 
-//可以用文件，也可以直接用下面文本
-void LeftNavBar::setupStylesheetText() {
-    QString qss = R"(
-        /* ===================================================================
-           1. 左侧竖向窄条导航美化
-           =================================================================== */
-        /* 假设你的左侧窄条载体叫 leftNavContainer */
-        LeftNavBar {
-            background-color: #1e1e1e; /* 更深的底色，衬托出层次 */
-            border-right: 1px solid #2d2d2d;
-        }
-
-        LeftNavBar QToolButton {
-            background-color: transparent;
-            border: none;
-            padding: 12px;
-            margin: 4px 6px;
-            border-radius: 4px; /* 按钮微微圆角，更现代 */
-        }
-
-        /* 鼠标悬停在左侧图标上 */
-        LeftNavBar QToolButton:hover {
-            background-color: #2a2a2a;
-        }
-
-        /* 类似你图中第二个选中的蓝色按钮效果 */
-        LeftNavBar QToolButton:checked {
-            background-color: #2b364c; /* 淡淡的科技蓝底色 */
-            border-left: 3px solid #3574F0; /* 标志性高亮左边条 */
-        }
-
-
-        /* ===================================================================
-           2. 中间树状图上方工具栏 (工区管理表头) 美化
-           =================================================================== */
-        /* 假设这个表头区域叫 treeHeaderWidget */
-        #treeHeaderWidget {
-            background-color: #262626; /* 稍淡的灰色 */
-            border-bottom: 1px solid #1a1a1a;
-            min-height: 35px;
-        }
-
-        /* "工区管理:" 标签 */
-        #treeHeaderWidget QLabel {
-            font-weight: bold;
-            color: #ffffff;
-            font-size: 13px;
-            padding-left: 8px;
-        }
-
-        /* 表头上的 +工区列表、×添加工区 按钮 */
-        #treeHeaderWidget QToolButton {
-            background-color: transparent;
-            color: #b5b5b5; /* 默认浅灰，不刺眼 */
-            font-size: 12px;
-            border: none;
-            padding: 4px 8px;
-            margin: 2px;
-            border-radius: 3px;
-        }
-
-        /* 鼠标划过表头按钮 */
-        #treeHeaderWidget QToolButton:hover {
-            background-color: #333333;
-            color: #ffffff; /* 划过时文字变亮 */
-        }
-
-        /* 鼠标按下表头按钮 */
-        #treeHeaderWidget QToolButton:pressed {
-            background-color: #444444;
-        }
-        )";
-    this->setStyleSheet(qss);
-}
 
 //使用对象名（Object Name）进行强绑定（适合有多种不同导航栏的情况）
 // 在 C++ 中给控件起个名字

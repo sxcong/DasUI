@@ -31,7 +31,6 @@ protected:
 
 private:
     QToolButton* createButton(const QString &iconPath, const QString &text, bool isSubModule = false);
-    void setupStylesheetText();
 private:
     Ui::LeftNavBar *ui;
     QVBoxLayout *mainLayout;

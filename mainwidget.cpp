@@ -14,6 +14,7 @@ MainWidget::MainWidget(QWidget *parent)
     leftNavBar = new LeftNavBar(this);
     ui->horizontalLayout->addWidget(leftNavBar); // 塞入最左侧
 
+
     rightStack = new QStackedWidget(this);
     ui->horizontalLayout->addWidget(rightStack);
 

@@ -1,8 +1,8 @@
-/* 整个导航条容器的背景 */
+/* 整个导航条容器的背景  background-color: #262626;*/
 LeftNavBar {
-    background-color: #262626;
+    background-color: #1C1F24;
     border: none;
-    border-right: 1px solid #1a1a1a;
+    border-right: 0px solid #1a1a1a;
     padding-top: 5px;
     padding-bottom: 5px; /* 底部也留点间距 */
 }

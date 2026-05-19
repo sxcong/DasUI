@@ -19,9 +19,13 @@ FileTreeListWidget::FileTreeListWidget(QWidget *parent)
 {
     ui->setupUi(this);
 
+    ui->widget_right->setAttribute(Qt::WA_StyledBackground, true);
+    // 确保在 UI 初始化后设置了名称
+    ui->widget_right->setObjectName("widget_right");
+
     setupCentralLayout();
-    //setupStylesheetText();
-   setupStylesheetText_vscode();
+   // setupStylesheetText_vscode();
+    return;
 }
 
 FileTreeListWidget::~FileTreeListWidget()
@@ -35,7 +39,9 @@ void FileTreeListWidget::setupCentralLayout() {
     //      --井信息
     //      --DAS
     //      --DTS
-    mainSplitter = new QSplitter(Qt::Horizontal, this);
+    mainSplitter = new AnimatedSplitter(Qt::Horizontal, this);
+
+    //mainSplitter->setHandleWidth(1);
 
     QVBoxLayout *pageLayout = new QVBoxLayout(this);
     pageLayout->addWidget(mainSplitter);
@@ -65,8 +71,6 @@ void FileTreeListWidget::setupCentralLayout() {
         headerLayout->addStretch();
         headerLayout->addWidget(addButton);
         headerLayout->addWidget(delButton);
-
-        //ui->verticalLayout
     }
 
     QIcon folderIcon;
@@ -80,6 +84,7 @@ void FileTreeListWidget::setupCentralLayout() {
 
     ui->treeWidget->setStyle(QStyleFactory::create("windows")); // 强行使用支持标准连接线的样式包（可选）
     ui->treeWidget->setIndentation(20);                       // 设置合适的层级缩进像素
+    ui->treeWidget->setFrameShape(QFrame::NoFrame);
 
 
    /* {
@@ -349,10 +354,19 @@ void FileTreeListWidget::createNewTab(const QString &title, const QString &path)
     QTableWidget *table = new QTableWidget();
     table->setColumnCount(3);
     table->setHorizontalHeaderLabels({"文件名", "大小", "修改时间"});
-    //table->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+    table->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+    table->verticalHeader()->hide();
     table->setEditTriggers(QAbstractItemView::NoEditTriggers); // 禁止编辑
     table->setSelectionBehavior(QAbstractItemView::SelectRows); // 整行选中
-    table->setStyleSheet(
+    table->setAlternatingRowColors(true); // 开启隔行换色
+    table->setShowGrid(false);             // 工业软件通常隐藏网格线会显得更干净
+
+
+    table->verticalHeader()->setDefaultSectionSize(30);
+    // 设置表头的高度
+    table->horizontalHeader()->setFixedHeight(35);
+
+   /* table->setStyleSheet(
         "QHeaderView::section {"
         "    background-color: #1E2A3A; color: #D0D0D0;"
         "    padding: 6px; border: none;"
@@ -376,7 +390,26 @@ void FileTreeListWidget::createNewTab(const QString &title, const QString &path)
         "QTableCornerButton::section {"
         "    background-color: #1E2A3A; border: none;"
         "}"
-        );
+        );*/
+
+    QString sStyle = R"(QTableWidget {
+        background-color: #141519;
+        alternate-background-color: #1C1F24; /* 稍微深一点的灰，不要对比太强烈 */
+        gridline-color: #2A2E35;             /* 设置细线条的颜色 */
+        border: none;
+        font: 11pt '微软雅黑';
+    }
+        QHeaderView::section {
+            /*background-color: #1E2A3A;*/
+            background-color: #2F363E;
+            color: #D0D0D0;
+            padding: 6px; border: none;
+            border-right: 2px solid #3F464E;
+            border-bottom: 1px solid #2A3A4A;
+            font: 13pt '微软雅黑';
+        }
+)";
+    table->setStyleSheet(sStyle);
 
     // 遍历文件夹并填充数据
     m_dasFileList.clear();
@@ -484,9 +517,9 @@ void FileTreeListWidget::setupContextMenu(QTableWidget* table) {
 void FileTreeListWidget::setupStylesheetText() {
     QString qss = R"(
        /* 左侧树状图容器（包含上方的工区管理小控件） */
-        #widget_left {
+       /* #widget_left {
             background-color: #151522;
-        }
+        }*/
 
         /* 顶部的“工区管理”自定义工具栏 */
         #widget_left > QWidget {
@@ -528,109 +561,196 @@ void FileTreeListWidget::setupStylesheetText() {
         )";
     this->setStyleSheet(qss);
 }
-#if 1
-void FileTreeListWidget::setupStylesheetText_vscode()
-{
+void FileTreeListWidget::setupStylesheetText_vscode(){
+
     // -------------------------------------------------------------------
-    // 精准微调的 24px 宽专属科技风灰色直角连线与 VS Code 扁平小箭头 (Base64)
+    // 精准微调的 专属科技风灰色直角连线与 VS Code 扁平小箭头 (Base64)
     // -------------------------------------------------------------------
+
     QString img_vline       = "url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAGAAAAAAGCAYAAAD99+H8AAAAL0lEQVR42mNgGAWjYBSMglEwCkbBSAMGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGAAgQAAn78Xm6AAAAAElFTkSuQmCC)"; // 垂直线 │
     QString img_branch_end  = "url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAGAAAAAAGCAYAAAD99+H8AAAAN0lEQVR42mNgGAWjYBSMglEwCkbBSAMGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGAAgQAAn78Xm6AAAAAElFTkSuQmCC)"; // 末尾拐角 └─
     QString img_branch_more = "url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAGAAAAAAGCAYAAAD99+H8AAAAN0lEQVR42mNgGAWjYBSMglEwCkbBSAMGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGAAgQAAn78Xm6AAAAAElFTkSuQmCC)"; // 中间分支 ├─
     QString img_closed      = "url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAAdUlEQVR42mNgGAWjYBSMglEADw48atSAYRtQCsSNoOIsUDwKiA9wE6AWhwNxOhBvA+IdQPwTiIuB+AsQPwHi90S6AosBSvEwIE4H4mxAnA/EO4D4JxA/A+JnQPwFiL8S4YpRMArwAEYB8QCgFA8D4gBQDgAAlF9v7K8vOpgAAAAASUVORK5CYII=)"; // VS Code 风格右箭头 ▶
     QString img_open        = "url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAAe0lEQVR42mNgGAWjYBSMglEADw48atSAYRtQCsSNoOIsUDwKiA9wE6AWhwNxOhBvA+IdQPwTiIuB+AsQPwHi90S6AosBSvEwIE4H4mxAnA/EO4D4JxA/A+JnQPwFiL8S6YpRMArwAEYB8QCgFA8D4gBQDgAAlF9v7K8vOpgAAAAASUVORK5CYII=)"; // VS Code 风格下箭头 ▼
 
-    // 1. 净化外层包裹器背景
-    if (ui->widget_left) {
-        ui->widget_left->setStyleSheet("#widget_left { background-color: #151522; padding: 0px; border: none; }");
+
+    // ===================================================================
+    // 【关键 C++ 属性】物理开启整行行为，并强制对齐缩进（25px 是剥离原生的关键微调）
+    // ===================================================================
+
+    if (ui->treeWidget) {
+        // 彻底消灭原生的灰色丑方块 / 驱逐残留的 '+' 号的关键设置
+        ui->treeWidget->setIndentation(25);
+        // 开启整行选中行为，有助于状态同步，但不能用 row::hover
+        ui->treeWidget->setSelectionBehavior(QAbstractItemView::SelectRows);
     }
-
-    // 2. 注入针对 24px 步长完全像素对齐的全新 QSS 树表样式
+    // 2. 注入深度调优的全新 QSS 树表样式（将前缀全数换为标准 QTreeView 基类）
     QString treeQss = QString(R"(
-        QTreeWidget {
-            background-color: #151522;
-            color: #C0C0C0;
-            border: none;
-            font-size: 13px;
-            outline: 0px;
+
+/* ===================================================================
+   Item (文本内容区域)
+   =================================================================== */
+QTreeView::item {
+    background-color: transparent;
+    color: #C0C0C0;
+    padding: 6px 4px;
+    margin: 0px;
+    /* 右侧有 1px 的底部隔离线 */
+    border-bottom: 1px solid #1A1A2A;
+}
+
+
+QTreeView::item:hover {
+    background-color: #2A4A6A;
+   color: #FFFFFF;
+}
+
+QTreeView::item:selected {
+    /*background-color: #2A5A8A;*/
+background-color: #FF0000;
+    color: #FFFFFF;
+    font-weight: bold;
+}
+
+
+
+/* 【核心补丁 1】当 item 处于既选中又悬停时，同步切换到浅蓝 */
+
+QTreeView::item:selected:hover {
+    background-color: #2E436E;
+    color: #FFFFFF;
+}
+
+
+
+/* ===================================================================
+   Branch (左侧连线/箭头区域)：核心修复点
+   =================================================================== */
+
+QTreeView::branch {
+    background-color: transparent;
+    width: 25px;
+    margin: 0px;
+    /* 【核心修复】让左侧区域物理上也带上同样的底部隔离线，逼迫高亮背景高度与右边绝对对齐 */
+    border-bottom: 1px solid #1A1A2A;
+}
+
+
+
+/* 完美拼接长条：让 branch 变色时也严格遵循底边框限制 */
+
+QTreeView::branch:hover {
+    background-color: #2A4A6A;
+}
+
+QTreeView::branch:selected {
+    background-color: #2A5A8A;
+}
+
+QTreeView::branch:selected:hover {
+    background-color: #3A6A9A;
+}
+
+
+
+/* 【核心补丁 2】确保 branch 与 item 在此状态下使用完全一致的 #3A6A9A */
+
+QTreeView::branch:selected:hover {
+    background-color: #3A6A9A;
+}
+
+
+
+/* -------------------------------------------------------------------
+
+           【核心修复】连线与箭头状态保持 (彻底击杀原生变形 + 号)
+
+           ------------------------------------------------------------------- */
+
+        /* 基础连线 */
+
+        QTreeView::branch:has-siblings:!adjoining { image: %1; }
+        QTreeView::branch:has-siblings:adjoining { image: %2; }
+        QTreeView::branch:!has-siblings:adjoining { image: %3; }
+
+
+
+        /* 【补丁 1】彻底覆盖所有折叠状态（分为有兄弟节点和无兄弟节点） */
+        QTreeView::branch:has-children:!has-siblings:closed,
+        QTreeView::branch:closed:has-children:has-siblings {
+            image: %4;
+            /* 【补丁 2】通过 padding-bottom 抵消底部 1px 边框带来的下沉偏移 */
+            padding-bottom: 1px;
         }
 
-        /* 统一设定分支格子的标准尺寸（与 C++ 中的 24px 缩进严格对齐） */
-        QTreeWidget::branch {
-            background-color: transparent;
-            width: 24px;
+
+
+        /* 彻底覆盖所有展开状态 */
+        QTreeView::branch:open:has-children:!has-siblings,
+        QTreeView::branch:open:has-children:has-siblings {
+            image: %5;
+            padding-bottom: 1px;
         }
 
-        /* 彻底消除双重连线：用单层干净的灰色像素切片接管 Qt 样式表的所有骨架线条 */
-        QTreeWidget::branch:has-siblings:!adjoining {
-            image: %1; /* 垂直主干线 │ */
-        }
-        QTreeWidget::branch:has-siblings:adjoining {
-            image: %2; /* 含有兄弟节点的分支线 ├─ */
-        }
-        QTreeWidget::branch:!has-siblings:adjoining {
-            image: %3; /* 最后一个子节点的分支线 └─ */
+
+
+        /* 悬停与选中状态的同步覆盖（必须同步穷举，否则高亮时原生图标又会闪现） */
+
+        QTreeView::branch:has-children:!has-siblings:closed:hover,
+        QTreeView::branch:closed:has-children:has-siblings:hover,
+        QTreeView::branch:has-children:!has-siblings:closed:selected,
+        QTreeView::branch:closed:has-children:has-siblings:selected {
+            image: %4;
+            padding-bottom: 1px;
         }
 
-        /* 彻底消灭原生的灰色丑方块：强制换上高颜值扁平极简小箭头 */
-        QTreeWidget::branch:has-children:closed {
-            image: %4; /* 折叠状态小箭头 */
-        }
-        QTreeWidget::branch:has-children:open {
-            image: %5; /* 展开状态小箭头 */
+
+
+        QTreeView::branch:open:has-children:!has-siblings:hover,
+        QTreeView::branch:open:has-children:has-siblings:hover,
+        QTreeView::branch:open:has-children:!has-siblings:selected,
+        QTreeView::branch:open:has-children:has-siblings:selected {
+            image: %5;
+            padding-bottom: 1px;
         }
 
-        /* ===================================================================
-           全状态选中与高亮对齐（让整条变色无缝拼接，连线在选中时被高亮吞掉）
-           =================================================================== */
-        QTreeWidget::branch:has-children:selected,
-        QTreeWidget::branch:has-children:selected:active,
-        QTreeWidget::branch:has-children:selected:!active,
-        QTreeWidget::branch:!has-children:selected,
-        QTreeWidget::branch:!has-children:selected:active,
-        QTreeWidget::branch:!has-children:selected:!active {
-            background-color: #2A5A8A;
-            image: none; /* 选中时蓝条内不再留有连线杂色 */
-        }
-
-        QTreeWidget::branch:hover {
-            background-color: #2A4A6A;
-        }
-
-        /* 节点文本内容区域样式 */
-        QTreeWidget::item {
-            background-color: transparent;
-            color: #C0C0C0;
-            padding: 6px 4px;
-            border-bottom: 1px solid #1A1A2A;
-        }
-
-        QTreeWidget::item:selected,
-        QTreeWidget::item:selected:active,
-        QTreeWidget::item:selected:!active {
-            background-color: #2A5A8A;
-            color: #FFFFFF;
-            font-weight: bold;
-            border: none;
-        }
-
-        QTreeWidget::item:hover {
-            background-color: #2A4A6A;
-            color: #FFFFFF;
-        }
+        QTreeView::branch:!has-children:selected { image: none; }
     )").arg(img_vline).arg(img_branch_more).arg(img_branch_end).arg(img_closed).arg(img_open);
 
-    ui->treeWidget->setStyleSheet(treeQss);
-
     // 3. 顺手美化主分割条
+
     if (mainSplitter) {
+
         QString splitterQss = R"(
             QSplitter::handle { background-color: #10101A; }
-            QSplitter::handle:horizontal { width: 3px; background-color: #151522; border-right: 1px solid #252535; }
+            QSplitter::handle:horizontal { width: 3px; background-color: #1E2228; border-right: 1px solid #252535; }
             QSplitter::handle:horizontal:hover { background-color: #2A5A8A; }
+
         )";
+
         mainSplitter->setStyleSheet(splitterQss);
     }
 }
 
-#endif
+// 覆写 eventFilter
+bool FileTreeListWidget::eventFilter(QObject *obj, QEvent *event) {
+
+    /*qDebug() << "Event received by:" << obj->metaObject()->className();
+    // 1. 确保对象是 QWidget（因为 QSplitterHandle 继承自 QWidget）
+    QWidget *widget = qobject_cast<QWidget*>(obj);
+
+    if (widget && widget->inherits("QSplitterHandle")) {
+        if (event->type() == QEvent::MouseButtonPress) {
+            qDebug() << "Handle Pressed!"; // 查看控制台是否有输出
+            widget->setProperty("pressed", true);
+            widget->style()->unpolish(widget); // 现在通过 widget 指针调用
+            widget->style()->polish(widget);
+        }
+        else if (event->type() == QEvent::MouseButtonRelease) {
+            widget->setProperty("pressed", false);
+            widget->style()->unpolish(widget);
+            widget->style()->polish(widget);
+        }
+    }*/
+    return QObject::eventFilter(obj, event);
+}
