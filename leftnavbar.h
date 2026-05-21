@@ -35,7 +35,7 @@ private:
     Ui::LeftNavBar *ui;
     QVBoxLayout *mainLayout;
     QButtonGroup *navGroup;
-    bool isExpanded;
+    bool isExpanded = false;
 
     QToolButton *btnToggle, *btnWorkspace, *btnMonitor, *btnReport, *btnUser, *btnSetting;
     QList<QToolButton*> allButtons;

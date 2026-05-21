@@ -16,6 +16,7 @@ SOURCES += \
     chartselectwidget.cpp \
     configdialog.cpp \
     curveview.cpp \
+    filelistwidget.cpp \
     filetreelistwidget.cpp \
     global.cpp \
     informationwgt.cpp \
@@ -40,6 +41,7 @@ HEADERS += \
     configdialog.h \
     curveview.h \
     defines.h \
+    filelistwidget.h \
     filetreelistwidget.h \
     global.h \
     informationwgt.h \
@@ -62,6 +64,7 @@ FORMS += \
     chartselectwidget.ui \
     configdialog.ui \
     curveview.ui \
+    filelistwidget.ui \
     filetreelistwidget.ui \
     informationwgt.ui \
     leftnavbar.ui \

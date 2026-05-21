@@ -42,26 +42,6 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-void MainWindow::toggleLeftBar() {
-    if (isExpanded) {
-        // 执行收起操作
-        activityBar->setToolButtonStyle(Qt::ToolButtonIconOnly);
-        activityBar->setFixedWidth(60);
-        actToggle->setText("展开导航");
-        // 可以换成向右的箭头图标
-        // actToggle->setIcon(QIcon(":/icons/menu_expand.png"));
-        isExpanded = false;
-    } else {
-        // 执行展开操作
-        activityBar->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
-        activityBar->setFixedWidth(160); // 展开后的宽度
-        actToggle->setText(" 收起导航");
-        // 可以换成向左的箭头图标
-        // actToggle->setIcon(QIcon(":/icons/menu_collapse.png"));
-        isExpanded = true;
-    }
-}
-
 void MainWindow::loadStyle(const QString &qssFile)
 {
     QElapsedTimer time;

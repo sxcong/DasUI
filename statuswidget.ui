@@ -206,23 +206,7 @@ border-top-left-radius:8px;
       </size>
      </property>
      <property name="styleSheet">
-      <string notr="true">QProgressBar {
-border: 2px solid rgba(255, 255, 255, 0.2);
-border-radius: 8px;
-background-color: rgba(255,255,255,0.4);
-text-align: center;
-color: #000000;
-}
-
-QProgressBar::chunk {
-background-color: rgba(77,166,12, 0.4);
-border-bottom-right-radius:8px; 
-border-bottom-left-radius:8px;
-border-top-right-radius:8px; 
-border-top-left-radius:8px;
-}
-
-</string>
+      <string notr="true"/>
      </property>
      <property name="value">
       <number>80</number>
@@ -248,23 +232,7 @@ border-top-left-radius:8px;
       </size>
      </property>
      <property name="styleSheet">
-      <string notr="true">QProgressBar {
-border: 2px solid rgba(255, 255, 255, 0.2);
-border-radius: 8px;
-background-color:rgba(255,255,255,0.4);
-text-align: center;
-color: #000000;
-}
-
-QProgressBar::chunk {
-background-color:rgba(139,18,174,0.8);
-border-bottom-right-radius:8px; 
-border-bottom-left-radius:8px;
-border-top-right-radius:8px; 
-border-top-left-radius:8px;
-}
-
-</string>
+      <string notr="true"/>
      </property>
      <property name="value">
       <number>80</number>

@@ -73,6 +73,5 @@
         <file>qss/blacksoft/radiobutton_unchecked.png</file>
         <file>qss/blacksoft/radiobutton_unchecked_disable.png</file>
         <file>qss/blacksoft/cheked.png</file>
-        <file>qss/leftnavi.qss</file>
     </qresource>
 </RCC>

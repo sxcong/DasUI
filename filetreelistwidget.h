@@ -9,13 +9,52 @@
 
 #include <QStyledItemDelegate>
 #include <QPainter>
-
 #include <QSplitter>
 #include <QSplitterHandle>
 #include <QPropertyAnimation>
 #include <QMouseEvent>
 #include <QStyleOption>
-#include <QPainter>
+#include <QPainterPath>
+#include <QProxyStyle>
+#include <QDebug>
+
+// 自定义树控件展开/收起箭头：VS Code 风格的三角箭头
+class ArrowTreeStyle : public QProxyStyle {
+public:
+    void drawPrimitive(PrimitiveElement element, const QStyleOption *option,
+                       QPainter *painter, const QWidget *widget) const override {
+        if (element == PE_IndicatorBranch) {
+            painter->save();
+            painter->setRenderHint(QPainter::Antialiasing, true);
+            // 填充分支背景，与暗色主题一致
+            painter->fillRect(option->rect, QColor("#141519"));
+            if (option->state & State_Children) {
+                QRect r = option->rect;
+                int s = qMin(r.width(), r.height()) * 3 / 8;
+                if (s < 3) s = 3;
+                QPointF c = r.center();
+                c.rx() += s; // 向右偏移靠近文字
+                QPolygonF arrow;
+                if (option->state & State_Open) {
+                    arrow << QPointF(c.x() - s, c.y() - s * 0.6)
+                          << QPointF(c.x() + s, c.y() - s * 0.6)
+                          << QPointF(c.x(),      c.y() + s * 0.6);
+                } else {
+                    arrow << QPointF(c.x() - s * 0.6, c.y() - s)
+                          << QPointF(c.x() - s * 0.6, c.y() + s)
+                          << QPointF(c.x() + s * 0.6, c.y());
+                }
+                painter->setPen(Qt::NoPen);
+                painter->setBrush(QColor("#AAAAAA"));
+                painter->drawPolygon(arrow);
+            }
+            painter->restore();
+            return;
+        }
+        QProxyStyle::drawPrimitive(element, option, painter, widget);
+    }
+};
+
 namespace Ui {
 class FileTreeListWidget;
 }
@@ -128,11 +167,7 @@ private:
     void removeFolder(const QString& szPath);
     void removeTab(const QString &title, const QString &path);
     void createNewTab(const QString &title, const QString &path);
-    void setupContextMenu(QTableWidget* table);
 
-
-    void initCardList();
-    QWidget* createCustomRowWidget(const QString &fileName, const QString &fileSize, const QString &fileTime);
 private slots:
     void onTreeItemClicked(QTreeWidgetItem *item, int column);
     void showTreeContextMenu(const QPoint &pos);

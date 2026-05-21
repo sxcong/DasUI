@@ -21,12 +21,12 @@ LeftNavBar::LeftNavBar(QWidget *parent)
     // ==========================================
     // 【顶部区域】：折叠控制 + 核心业务模块
     // ==========================================
-    btnToggle  = createButton(":/icons/menu.png", "收起导航");
-    btnWorkspace = createButton(":/icons/workspace.png", " 工区管理", true);
-    btnMonitor   = createButton(":/icons/monitor.png", " 实时监测", true);
-    btnReport    = createButton(":/icons/report.png", " 成果报告", true);
+    btnToggle  = createButton(":/res/button/Home.png", "收起导航");
+    btnWorkspace = createButton(":/res/button/user_switch.png", " 工区管理", true);
+    btnMonitor   = createButton(":/res/button/curve_config.png", " 实时监测", true);
+    btnReport    = createButton(":/res/button/software_config.png", " 成果报告", true);
 
-    mainLayout->addWidget(btnToggle);
+
     // 加一条淡淡的分割线
     QWidget *line = new QWidget(this);
     line->setFixedHeight(1);
@@ -40,24 +40,23 @@ LeftNavBar::LeftNavBar(QWidget *parent)
 
     btnWorkspace->setChecked(true); // 默认选中第一个
 
-    // ==========================================
-    // 【中间区域】：放置一个神奇的弹簧（Spacer）
-    // 它会把上下的组件往两边拼命推，从而实现中间留空
-    // ==========================================
-    mainLayout->addStretch();
+
+    mainLayout->addStretch(1);
 
     // ==========================================
     // 【底部区域】：系统设置、关于等按钮
     // ==========================================
-    btnUser = createButton(":/icons/user.png", " 个人中心");
-    btnSetting = createButton(":/icons/setting.png", " 系统设置");
+    btnUser = createButton(":/res/button/view_switch.png", " 个人中心");
+    btnSetting = createButton(":/res/button/software_config.png", " 系统设置");
 
     mainLayout->addWidget(btnUser);
     mainLayout->addWidget(btnSetting);
 
-    // 初始状态：默认收起
-    setFixedWidth(60);
 
+    mainLayout->addStretch();
+    mainLayout->addWidget(line);
+    mainLayout->addWidget(btnToggle);//伸缩按键放在最下边
+    mainLayout->addWidget(line);
     // ==========================================
     // 信号连接
     // ==========================================
@@ -69,13 +68,38 @@ LeftNavBar::LeftNavBar(QWidget *parent)
         emit modulesChanged(id);
     });
 
+    QString qss = R"(
+        /* 设置整个侧边栏背景为深色（假设你的深色是 #222222） */
+        LeftNavBar {
+            background-color: #222222;
+        }
 
-    QFile qssFile(":/qss/leftnavi.qss");
-    if (qssFile.open(QFile::ReadOnly)) {
-        QString qss = QLatin1String(qssFile.readAll());
-        setStyleSheet(qss);
-        qssFile.close();
-    }
+        /* 核心：设置按钮样式 */
+        QToolButton {
+            background-color: transparent; /* 关键：背景透明 */
+            color: white;                  /* 文字颜色 */
+            border: none;                  /* 去掉边框 */
+            padding: 10px;                 /* 内边距，让点击区域更好看 */
+            text-align: left;              /* 文字左对齐 */
+            font-size: 14px;
+        }
+
+        /* 鼠标悬停时的效果 */
+        QToolButton:hover {
+            background-color: rgba(255, 255, 255, 0.1); /* 轻微变亮 */
+        }
+
+        /* 选中状态（setChecked(true)）的效果 */
+        QToolButton:checked {
+            background-color: rgba(255, 255, 255, 0.2); /* 选中时背景更亮一点 */
+            color: #00CCFF; /* 选中时文字变色（可选） */
+        }
+    )";
+    this->setStyleSheet(qss);
+
+
+    // 初始状态：默认收起
+    setFixedWidth(60);
 }
 
 LeftNavBar::~LeftNavBar()

@@ -50,8 +50,6 @@ private slots:
     void slot_tBtn_Analysis_clicked();
     void slot_tbtn_Report_clicked();
 
-    void toggleLeftBar();
-
 protected:
     virtual void showEvent(QShowEvent *event) override;
     virtual void timerEvent(QTimerEvent *event) override;

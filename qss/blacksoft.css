@@ -88,7 +88,7 @@ background-color:#444444;
 /*自定义控件*/
 QWidget#widget_liebiao{background-color: rgb(31, 41, 62);}
 
-
+QWidget { font-family: "Microsoft YaHei", "Segoe UI"; }
 
 QLabel{
 color:#FFFFFF;
@@ -484,20 +484,7 @@ alternate-background-color:#525252;
 gridline-color:#242424;
 }*/
 
-QTreeView::branch:closed:has-children{
-margin:4px;
-border-image:url(:/qss/blacksoft/branch_open.png);
-}
-
-QTreeView::branch:open:has-children{
-margin:4px;
-border-image:url(:/qss/blacksoft/branch_close.png);
-}
-
-QTreeView,QListView,QTableView,QSplitter::handle,QTreeView::branch{
-/*background:#444444;*/
-background:#141519;
-}
+/* 分支图标由 ArrowTreeStyle 绘制三角箭头，此处留空避免干扰 */
 
 QTableView::item:selected,QListView::item:selected,QTreeView::item:selected{
 color:#DCDCDC;
@@ -508,7 +495,7 @@ background:#2E436E;
 QTableView::item:hover,QListView::item:hover,QTreeView::item:hover,QHeaderView,QHeaderView::section,QTableCornerButton:section{
 color:#DCDCDC;
 /*background:#525252;*/
-background:#252627;
+background:#141519;
 }
 
 QTreeView::item:selected:hover {

@@ -75,5 +75,13 @@
         <file>res/png/pause.png</file>
         <file>res/png/play.png</file>
         <file>res/png/stop.png</file>
+        <file>res/button/curve_config.png</file>
+        <file>res/button/hardware_config.png</file>
+        <file>res/button/software_config.png</file>
+        <file>res/button/temp_query.png</file>
+        <file>res/button/user_switch.png</file>
+        <file>res/button/view_switch.png</file>
+        <file>res/button/visual_config.png</file>
+        <file>res/button/Home.png</file>
     </qresource>
 </RCC>

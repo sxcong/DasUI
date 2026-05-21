@@ -11,9 +11,7 @@
 #include <QElapsedTimer>
 #include <QLabel>
 #include <QToolButton>
-#include <QPushButton>
-#include <QStyleFactory>
-
+#include "filelistwidget.h"
 
 FileTreeListWidget::FileTreeListWidget(QWidget *parent)
     : QWidget(parent)
@@ -52,23 +50,48 @@ void FileTreeListWidget::setupCentralLayout() {
 
     //左上：button
     {
-        QHBoxLayout *headerLayout = new QHBoxLayout(ui->widget);
-        headerLayout->setContentsMargins(5, 2, 5, 2); // 紧凑间距
+        ui->widget->setStyleSheet(R"(
+        QWidget#widget {
+            background-color: #1A1C23;
+            border-bottom: 1px solid #2A2A2A;
+        }
+        )");
 
-        QLabel *titleLabel = new QLabel("工区管理：", ui->widget);
-        titleLabel->setStyleSheet("font-weight: bold; color: #fff; text-transform: uppercase; font-size: 16px;"); // 搭配你的深色皮肤
+        QHBoxLayout *headerLayout = new QHBoxLayout(ui->widget);
+        headerLayout->setContentsMargins(12, 6, 8, 6);
+
+        QLabel *titleLabel = new QLabel("工区管理", ui->widget);
+        titleLabel->setStyleSheet("font-weight: bold; color: #FFFFFF; font-size: 14px; background: transparent;");
         headerLayout->addWidget(titleLabel);
 
+        QString btnCommon = R"(
+        QToolButton {
+            border: 1px solid #3A3A3A;
+            border-radius: 4px;
+            color: #CCCCCC;
+            background: #2A2A2A;
+            padding: 4px 12px;
+            font-size: 12px;
+        }
+        QToolButton:hover {
+            background: #3A3A3A;
+            color: #FFFFFF;
+            border-color: #4A8BC2;
+        }
+        QToolButton:pressed {
+            background: #222222;
+        }
+        )";
+
         QToolButton *addButton = new QToolButton(ui->widget);
-        addButton->setText("+工区列表");
+        addButton->setText("+ 导入");
         addButton->setToolTip("添加工区");
-        // 可以设置无边框样式，更符合你的扁平化UI
-        addButton->setStyleSheet("QToolButton { border: none; color: white; } QToolButton:hover { background: #444; }");
+        addButton->setStyleSheet(btnCommon);
 
         QToolButton *delButton = new QToolButton(ui->widget);
-        delButton->setText("×添加工区");
+        delButton->setText("× 移除");
         delButton->setToolTip("删除工区");
-        delButton->setStyleSheet("QToolButton { border: none; color: white; } QToolButton:hover { background: #444; }");
+        delButton->setStyleSheet(btnCommon);
 
         headerLayout->addStretch();
         headerLayout->addWidget(addButton);
@@ -84,14 +107,14 @@ void FileTreeListWidget::setupCentralLayout() {
     ui->treeWidget->setHeaderLabel("工区--" );
     ui->treeWidget->setIconSize(QSize(20, 20));
 
-    ui->treeWidget->setStyle(QStyleFactory::create("windows")); // 强行使用支持标准连接线的样式包（可选）
-    ui->treeWidget->setIndentation(20);                       // 设置合适的层级缩进像素
+    ui->treeWidget->setIndentation(20);
     ui->treeWidget->setFrameShape(QFrame::NoFrame);
+    ui->treeWidget->setStyle(new ArrowTreeStyle);
 
 
     QTreeWidgetItem *rootItem = new QTreeWidgetItem(ui->treeWidget);
     rootItem->setText(0, "数据");
-    rootItem->setIcon(0, QIcon(":/res/png/datarootnode.png")); // 可以设置一个文件夹或方块图标
+    // 去掉数据库图标，只用分支箭头（ArrowTreeStyle 提供 ▾/▸）
 
     // 创建节点并关联索引（使用 Data 角色存储索引）
     wellItem = new QTreeWidgetItem(rootItem, QStringList() << "井信息");
@@ -130,6 +153,68 @@ void FileTreeListWidget::setupCentralLayout() {
     connect(ui->treeWidget, &QTreeWidget::customContextMenuRequested, this, &FileTreeListWidget::showTreeContextMenu);
     connect(ui->treeWidget, &QTreeWidget::itemClicked, this, &FileTreeListWidget::onTreeItemClicked);
     ui->treeWidget->expandAll();
+
+    // === 暗色主题 QSS ===
+    ui->widget_left->setStyleSheet(R"(
+    QWidget#widget_left {
+        background-color: #141519;
+    }
+    QTreeView {
+        background-color: #141519;
+        border: none;
+        outline: none;
+    }
+    QTreeView::item {
+        padding: 6px 12px;
+        margin: 1px 4px;
+        color: #BBBBBB;
+        border-radius: 4px;
+    }
+    QTreeView::item:selected {
+        background-color: #2E436E;
+        color: #FFFFFF;
+        border: 1px solid #4A8BC2;
+    }
+    QTreeView::item:hover:!selected {
+        background-color: #222438;
+    }
+    QTreeView::item:selected:hover {
+        background-color: #34508A;
+        border: 1px solid #5BA3D6;
+    }
+    )");
+
+    tabWidget->setStyleSheet(R"(
+    QTabWidget::pane {
+        background-color: #141519;
+        border: none;
+        border-top: 1px solid #2A2A2A;
+    }
+    QTabBar::tab {
+        background: #1E1E1E;
+        color: #999999;
+        border: none;
+        min-width: 60px;
+        padding: 6px 14px;
+        margin-right: 1px;
+    }
+    QTabBar::tab:selected {
+        background: #141519;
+        color: #FFFFFF;
+        border-top: 2px solid #4A8BC2;
+    }
+    QTabBar::tab:hover:!selected {
+        background: #2A2A2A;
+        color: #CCCCCC;
+    }
+    QTabBar::close-button {
+        image: url(:/res/png/close.png);
+        subcontrol-position: right;
+    }
+    QWidget#qt_tabwidget_stackedwidget {
+        background: #141519;
+    }
+    )");
 }
 
 void FileTreeListWidget::onTreeItemClicked(QTreeWidgetItem *item, int column) {
@@ -297,310 +382,13 @@ void FileTreeListWidget::showGeneralContextMenu(QTableWidget* table, const QPoin
 
 void FileTreeListWidget::createNewTab(const QString &title, const QString &path)
 {
-    // 创建容器 Widget
-    QWidget *container = new QWidget();
-    container->setProperty("folderPath", path);
-    QVBoxLayout *layout = new QVBoxLayout(container);
-    //layout->setContentsMargins(0, 0, 0, 0);
-
-    layout->setContentsMargins(20, 20, 20, 20);
-    // 创建表格
-    QTableWidget *table = new QTableWidget();
-    table->setColumnCount(1);
-    table->setHorizontalHeaderLabels({"文件名", "大小", "修改时间"});
-    table->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
-
-    table->setEditTriggers(QAbstractItemView::NoEditTriggers); // 禁止编辑
-    table->setSelectionBehavior(QAbstractItemView::SelectRows); // 整行选中
-    //table->setAlternatingRowColors(true); // 开启隔行换色
-    table->setSelectionMode(QAbstractItemView::NoSelection); // 禁止默认选中高亮（可选）
-    table->horizontalHeader()->setStretchLastSection(false);
-    table->horizontalHeader()->setSectionResizeMode(0, QHeaderView::Stretch);
-    //table->horizontalHeader()->setSectionResizeMode(1, QHeaderView::Fixed);
-    //table->horizontalHeader()->setSectionResizeMode(2, QHeaderView::Fixed);
-
-    table->setColumnWidth(1, 120);
-    table->setColumnWidth(2, 120);
-
-    // 设置表头的高度
-    table->horizontalHeader()->setFixedHeight(35);
-    table->verticalHeader()->setSectionResizeMode(QHeaderView::Fixed);
-    table->verticalHeader()->setDefaultSectionSize(80);
-    table->setShowGrid(false); // 工业软件通常隐藏网格线会显得更干净
-    table->setAlternatingRowColors(false);
-
-    table->verticalHeader()->hide();
-    table->horizontalHeader()->hide();
-
-    QString qss = R"(QTableWidget {
-    background-color: transparent; /* 去掉冗余背景 */
-    padding: 10px;                /* 这里给了呼吸感 */
-
-    /*background-color: #141519;  这是底色，也就是你看到的“间隔”颜色 */
-    border: none;
-    gridline-color: transparent;
-    /* 给整个表格容器设置一个顶部内边距，这样表头与第一行之间就会产生自然的空隙
-    padding-top: 10px; */
-    }
-
-QTableWidget::item {
-    /* 关键：给 item 设置 margin，露出底部的 #141519 */
-    margin-top: 5px;      /* 上间距 */
-    margin-bottom: 5px;   /* 下间距 */
-    margin-left: 10px;    /* 左间距 */
-    margin-right: 10px;   /* 右间距 */
-
-    /* 这里的背景色是卡片的颜色 */
-    background-color: #222222;
-    border-radius: 8px;
-})";
-
-    table->setStyleSheet(qss);
-
-
-
-
-    // 遍历文件夹并填充数据
-    m_dasFileList.clear();
-    QDir dir(path);
-    dir.setNameFilters(QStringList() << "*.h5");
-    // QDir::Files 表示只列出文件（不包含目录）
-    // QDir::NoDotAndDotDot 表示不列出 "." 和 ".."
-    //dir.setFilter(QDir::Files | QDir::NoDotAndDotDot);
-    QFileInfoList list = dir.entryInfoList(QDir::Files); // 仅获取文件
-
-    table->setRowCount(list.size());
-    for (int i = 0; i < list.size(); ++i) {
-        QFileInfo fileInfo = list.at(i);
-
-        // 文件名
-        //table->setItem(i, 0, new QTableWidgetItem(fileInfo.fileName()));
-        //table->setCellWidget(i, 0, row);
-        m_dasFileList.append(fileInfo.filePath());
-
-        // 大小 (格式化显示)
-        qint64 size = fileInfo.size();
-        QString sizeStr = QString::number(size / 1024.0, 'f', 2) + " KB";
-        //table->setItem(i, 1, new QTableWidgetItem(sizeStr));
-
-        // 修改时间
-        QString timeStr = fileInfo.lastModified().toString("yyyy-MM-dd HH:mm:ss");
-        //table->setItem(i, 2, new QTableWidgetItem(timeStr));
-
-        QWidget *fullRowWidget = createCustomRowWidget(fileInfo.fileName(), sizeStr, timeStr);
-        table->setCellWidget(i, 0, fullRowWidget);
-        //table->setRowHeight(i, 100); // 根据内容调整高度
-    }
-
-    setupContextMenu(table);
-
-    //双击处理相当文件
-    connect(table, &QTableWidget::cellDoubleClicked,
-            this, [=](int row, int column) {
-                // 这里写你的逻辑
-                if (column > 2)
-                    return;
-                QTableWidgetItem *item = table->item(row, column);
-
-
-                if (item) {
-                    QString szFile = m_dasFileList.at(row);
-                    qDebug() << "双击了:" << item->text()<<szFile;
-                } else {
-                    qDebug() << "双击了空白单元格";
-                }
-            });
-
-  //  ProjectMgr::Instance().m_projectFile.setDASPath(path, m_dasFileList);
-
-    layout->addWidget(table);
-    // 添加到 Tab 并切换至当前页
-    int index = tabWidget->addTab(container, title);
-    tabWidget->setCurrentIndex(index);
-}
-
-// 辅助函数：绑定信号
-void FileTreeListWidget::setupContextMenu(QTableWidget* table) {
-    table->setContextMenuPolicy(Qt::CustomContextMenu);
-    connect(table, &QTableWidget::customContextMenuRequested, this, [=](const QPoint &pos) {
-        // 调用通用处理函数，把当前的 table 传进去
-        this->showGeneralContextMenu(table, pos);
-    });
-}
-
-void FileTreeListWidget::initCardList()
-{
-
-}
-
-
-
-QWidget* FileTreeListWidget::createCustomRowWidget(const QString &fileName, const QString &fileSize, const QString &fileTime)
-{
-    // 1. 创建容器 Widget
-    QWidget *container = new QWidget();
-    container->setObjectName("myCard"); // 给对象起个名字
-
-    QString qss = R"(
-    /* 使用 'this' 确保样式只应用到 container 自身 */
-    /* 合并了背景色、圆角和边框 */
-    QWidget#myCard {
-        background-color: #222222;
-        border-radius: 8px;
-        border: 2px none #141519; /* 这里的颜色必须和表格背景色一致 */
-    }
-    /* 设置悬停样式 */
-    QWidget#myCard:hover {
-        background-color: #2A2A2A; /* 悬停时变亮 */
-        border: 1px solid #444444; /* 保持边框颜色，防止闪烁 */
-    }
-    )";
-
-    container->setStyleSheet(qss);
-
-   // container->setMouseTracking(true);
-
-    // 3. 主布局 (水平布局)
-    QHBoxLayout *mainLayout = new QHBoxLayout(container);
-    //mainLayout->setContentsMargins(15, 10, 15, 10); // 左右留白
-    mainLayout->setContentsMargins(20, 10, 20, 2);
-    mainLayout->setSpacing(20); // 各部分之间的间距
-
-    // --- 左侧区域：图标 + 文件名 + 状态 ---
-    QWidget *leftWidget = new QWidget();
-    QHBoxLayout *leftLayout = new QHBoxLayout(leftWidget);
-    leftLayout->setContentsMargins(0,0,0,0);
-    leftLayout->setSpacing(10);
-
-    QLabel *iconLabel = new QLabel();
     {
-        iconLabel->setFixedSize(36, 36); // 稍微增大容器，留出内边距空间
-        iconLabel->setPixmap(QPixmap(":/res/png/das.png").scaled(36, 36, Qt::KeepAspectRatio, Qt::SmoothTransformation));
-        iconLabel->setAlignment(Qt::AlignCenter); // 居中显示
-
-        // 在样式表中添加圆角
-        iconLabel->setStyleSheet(
-            "background-color: #333333; " // 给图标一个底色，显得不那么飘
-            "border-radius: 6px; "        // 圆角是精致的关键
-            "padding: 3px;"               // 让图标内部有留白
-            );
+        FileListWidget* pWidget = new FileListWidget();
+        pWidget->setProperty("folderPath", path);
+        pWidget->setPath(title, path);
+        int index = tabWidget->addTab(pWidget, title);
+        tabWidget->setCurrentIndex(index);
     }
-    //iconLabel->setPixmap(QPixmap(":/res/png/das.png").scaled(24, 24, Qt::KeepAspectRatioByExpanding, Qt::SmoothTransformation)); // 替换为你的图标路径
-    //iconLabel->setFixedSize(24, 24);
-    //iconLabel->setStyleSheet("background-color: transparent;");
-    //  建议：如果图标本身颜色太暗，可以在这里给它加个浅色背景调试一下
-   // iconLabel->setStyleSheet("background-color: rgba(255, 0, 0, 50);"); // 临时调试用：红色半透明背景
-
-    /*//以下代码生成一个圆形区域
-     {
-        // --- 核心修改：绘制圆形背景 + 图标 ---
-        QPixmap sourcePixmap(":/res/png/das.png");
-
-        // 1. 创建一个透明画布
-        QPixmap finalPixmap(32, 32);
-        finalPixmap.fill(Qt::transparent);
-
-        QPainter painter(&finalPixmap);
-        painter.setRenderHint(QPainter::Antialiasing, true); // 开启抗锯齿
-
-        // 2. 绘制圆形背景 (比如一个好看的蓝色或深灰色)
-        // QColor bgColor(33, 150, 243); // 蓝色
-        QColor bgColor(50, 50, 50);    // 深灰色，根据你的 UI 风格调整
-        painter.setBrush(bgColor);
-        painter.setPen(Qt::NoPen);
-        painter.drawEllipse(0, 0, 32, 32);
-
-        // 3. 在圆形背景上绘制图标 (留一点边距，比如 8px)
-        QPixmap scaledIcon = sourcePixmap.scaled(16, 16, Qt::KeepAspectRatio, Qt::SmoothTransformation);
-        painter.drawPixmap(8, 8, 16, 16, scaledIcon);
-
-        painter.end();
-
-        iconLabel->setPixmap(finalPixmap);
-        iconLabel->setStyleSheet("background-color: transparent;"); // 确保 label 本身没背景
-    }*/
-
-    QVBoxLayout *textLayout = new QVBoxLayout();
-    textLayout->setSpacing(4);
-
-
-    QLabel *nameLabel = new QLabel(fileName);
-    nameLabel->setObjectName("fileNameLabel"); // 用于QSS单独设置样式
-    nameLabel->setStyleSheet("color: #D5D5D5; font-size: 16px; font-weight: bold;"); // 明确指定白色
-    textLayout->addWidget(nameLabel);
-
-
-    QLabel *fileTimeLabel = new QLabel(fileTime); // 这里你可以传入动态状态
-    fileTimeLabel->setFixedWidth(160);
-    fileTimeLabel->setAlignment(Qt::AlignLeft);//左对齐
-    fileTimeLabel->setObjectName("fileTimeLabel");
-    fileTimeLabel->setStyleSheet("color: #A0A0A0; font-size: 12px;font-weight: bold;font-family: Consolas, Courier New, Monospace;");
-
-    QLabel *sizeLabel = new QLabel(fileSize);
-    sizeLabel->setAlignment(Qt::AlignRight);//右对齐，保证上下整齐
-    sizeLabel->setFixedWidth(200); // 固定宽度，保证对齐
-    sizeLabel->setStyleSheet("color: #A0A0A0;font-size: 12px;font-weight: bold;font-family: Consolas, Courier New, Monospace;");//Monospace family
-
-    QHBoxLayout *textLayout2 = new QHBoxLayout();
-    textLayout2->addWidget(fileTimeLabel);
-    textLayout2->addWidget(sizeLabel);
-    textLayout2->setContentsMargins(0, 4, 0, 0);//与文件名上下拉开距离
-
-    textLayout->addLayout(textLayout2);
-    textLayout->setContentsMargins(10, 6, 0, 0); // 增加图标与文字的左间距
-
-    leftLayout->addWidget(iconLabel);
-    leftLayout->addLayout(textLayout);
-    // 让左侧内容靠左
-    leftLayout->addStretch();
-
-    // --- 中间区域：大小 ---
-
-
-    // --- 右侧区域：时间 ---
-   /* QLabel *timeLabel = new QLabel(fileTime);
-    timeLabel->setAlignment(Qt::AlignCenter);
-    timeLabel->setFixedWidth(160); // 固定宽度，保证对齐
-    timeLabel->setStyleSheet("color: #CCCCCC;");*/
-
-    // --- 最右侧：按钮组 ---
-    QWidget *btnWidget = new QWidget();
-    QHBoxLayout *btnLayout = new QHBoxLayout(btnWidget);
-    btnLayout->setContentsMargins(5, 5, 100, 0);
-    btnLayout->setSpacing(10);
-
-    // 简单的按钮样式，防止按钮背景也是黑的看不见
-    QString btnStyle = "QPushButton { color: #FFFFFF; background: transparent; border: 1px solid #444; border-radius: 4px; padding: 2px 0px; }"
-                       "QPushButton:hover { background: #555; }"
-                       "QPushButton:pressed { background-color: #333; border: 1px solid #222; }";
-
-    // 这里模拟你的 1 2 3 dowr 按钮
-    QToolButton *btn1 = new QToolButton();
-    QToolButton *btn2 = new QToolButton();
-    QToolButton *btn3 = new QToolButton();
-    QToolButton *btn4 = new QToolButton();
-    btn1->setStyleSheet(btnStyle);
-    btn2->setStyleSheet(btnStyle);
-    btn3->setStyleSheet(btnStyle);
-    btn4->setStyleSheet(btnStyle);
-
-    btn1->setIcon(QIcon(":/res/png/play.png"));
-    btn2->setIcon(QIcon(":/res/png/pause.png"));
-    btn3->setIcon(QIcon(":/res/png/stop.png"));
-    btn4->setIcon(QIcon(":/res/png/recyclebin.png"));
-
-    btnLayout->addWidget(btn1);
-    btnLayout->addWidget(btn2);
-    btnLayout->addWidget(btn3);
-    btnLayout->addWidget(btn4);
-
-    // --- 将所有区域加入主布局 ---
-    mainLayout->addWidget(leftWidget);   // 左侧
-   // mainLayout->addWidget(sizeLabel);    // 中间大小
-   //mainLayout->addWidget(timeLabel);   // 右侧时间
-    mainLayout->addWidget(btnWidget);    // 最右侧按钮
-
-    // 如果希望按钮靠最右，可以在左侧和大小之间加伸缩项，或者调整布局策略
-   //  mainLayout->setStretch(0, 1); // 让左侧拉伸
-    return container;
+    return;  
 }
+
