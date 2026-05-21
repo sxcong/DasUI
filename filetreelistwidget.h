@@ -26,26 +26,32 @@ public:
         if (element == PE_IndicatorBranch) {
             painter->save();
             painter->setRenderHint(QPainter::Antialiasing, true);
-            // 填充分支背景，与暗色主题一致
+            
+            // 填充背景以覆盖默认的绘制
             painter->fillRect(option->rect, QColor("#141519"));
+
             if (option->state & State_Children) {
                 QRect r = option->rect;
-                int s = qMin(r.width(), r.height()) * 3 / 8;
-                if (s < 3) s = 3;
+                int s = 6; // 箭头半边长
                 QPointF c = r.center();
-                c.rx() += s; // 向右偏移靠近文字
+                
                 QPolygonF arrow;
                 if (option->state & State_Open) {
-                    arrow << QPointF(c.x() - s, c.y() - s * 0.6)
-                          << QPointF(c.x() + s, c.y() - s * 0.6)
-                          << QPointF(c.x(),      c.y() + s * 0.6);
+                    // 向下的等腰三角形
+                    arrow << QPointF(c.x() - s, c.y() - s / 1.5)
+                          << QPointF(c.x() + s, c.y() - s / 1.5)
+                          << QPointF(c.x(),     c.y() + s / 1.5);
                 } else {
-                    arrow << QPointF(c.x() - s * 0.6, c.y() - s)
-                          << QPointF(c.x() - s * 0.6, c.y() + s)
-                          << QPointF(c.x() + s * 0.6, c.y());
+                    // 向右的等腰三角形
+                    arrow << QPointF(c.x() - s / 1.5, c.y() - s)
+                          << QPointF(c.x() - s / 1.5, c.y() + s)
+                          << QPointF(c.x() + s / 1.5,   c.y());
                 }
+                
+                // 选中行时箭头变亮
+                QColor arrowColor = (option->state & State_Selected) ? QColor("#FFFFFF") : QColor("#888888");
                 painter->setPen(Qt::NoPen);
-                painter->setBrush(QColor("#AAAAAA"));
+                painter->setBrush(arrowColor);
                 painter->drawPolygon(arrow);
             }
             painter->restore();

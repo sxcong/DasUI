@@ -8,6 +8,11 @@ CurveView::CurveView(QWidget *parent) :
     ui->setupUi(this);
     mPlot = ui->widget;
 
+    // 初始化成员变量
+    m_Traser = nullptr;
+    m_type = 0; 
+    m_x1 = 0; m_x2 = 100; m_y1 = 0; m_y2 = 100;
+
 //    connect(mPlot, &QCustomPlot::mouseMove, this, &CurveView::MyMouseMoveEvent);
     curveInit();
     mPlot->setStyleSheet("QToolTip{border:1px solid rgb(118, 118, 118); color:#000000; font-size:12px;}");

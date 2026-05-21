@@ -11,6 +11,10 @@ class LeftNavBar;
 class QStackedWidget;
 class WellWidget;
 class FileTreeListWidget;
+class AdvancedAnalysisWidget;
+class UserCenterWidget;
+class SystemSettingsWidget;
+class ReportWidget;
 
 class MainWidget : public QWidget
 {
@@ -27,7 +31,10 @@ private:
 
     WellWidget* m_pWellWidget = nullptr;
     FileTreeListWidget* m_pFileTreeListWidget = nullptr;
-
+    AdvancedAnalysisWidget* m_pAnalysisWidget = nullptr;
+    UserCenterWidget* m_pUserCenterWidget = nullptr;
+    SystemSettingsWidget* m_pSystemSettingsWidget = nullptr;
+    ReportWidget* m_pReportWidget = nullptr;
 
 };
 

@@ -194,6 +194,7 @@ void FileListWidget::initTable(QTableWidget *table)
     table->setColumnWidth(0, 400);
     table->setColumnWidth(1, 120);
     table->setColumnWidth(2, 200);
+    table->setColumnWidth(3, 200);
 
     // 设置表头的高度
     //table->horizontalHeader()->setFixedHeight(35);
@@ -238,7 +239,7 @@ void FileListWidget::initTable(QTableWidget *table)
     /* 2. 数据行卡片 */
     QTableWidget::item {
         background-color: #222222;
-        color: #BBBBBB;
+        color: #D1D1D1;
         border: none;
         margin-bottom: 6px;
         padding-left: 15px;
@@ -292,7 +293,7 @@ QWidget* FileListWidget::createCustomRowWidget(const QString &fileName, const QS
     // 3. 主布局 (水平布局)
     QHBoxLayout *mainLayout = new QHBoxLayout(container);
     //mainLayout->setContentsMargins(15, 10, 15, 10); // 左右留白
-    mainLayout->setContentsMargins(20, 10, 20, 2);
+    mainLayout->setContentsMargins(20, 0, 20, 0);
     mainLayout->setSpacing(20); // 各部分之间的间距
 
     // --- 左侧区域：图标 + 文件名 + 状态 ---
@@ -388,28 +389,42 @@ QWidget* FileListWidget::createCustomRowWidget(const QString &fileName, const QS
     // --- 最右侧：按钮组 ---
     QWidget *btnWidget = new QWidget();
     QHBoxLayout *btnLayout = new QHBoxLayout(btnWidget);
-    btnLayout->setContentsMargins(5, 5, 100, 0);
+    btnLayout->setContentsMargins(0, 0, 0, 0);
     btnLayout->setSpacing(10);
+    btnLayout->setAlignment(Qt::AlignCenter); // 按钮组在列内居中
 
     // 简单的按钮样式，防止按钮背景也是黑的看不见
-    QString btnStyle = "QPushButton { color: #FFFFFF; background: transparent; border: 1px solid #444; border-radius: 4px; padding: 2px 0px; }"
+    /*QString btnStyle = "QPushButton { color: #FFFFFF; background: transparent; border: 1px solid #444; border-radius: 4px; padding: 2px 0px; }"
                        "QPushButton:hover { background: #555; }"
-                       "QPushButton:pressed { background-color: #333; border: 1px solid #222; }";
+                       "QPushButton:pressed { background-color: #333; border: 1px solid #222; }";*/
+
+    QString btnStyle = "QToolButton { color: #FFFFFF; background: #C1C1C1; border: 1px solid #B0B0B0; border-radius: 4px; }"
+                       "QToolButton:hover { background: #357591; border-color: #5BA3D6; }"
+                       "QToolButton:pressed { background-color: #333; border: 1px solid #222; }";
 
     // 这里模拟你的 1 2 3 dowr 按钮
     QToolButton *btn1 = new QToolButton();
     QToolButton *btn2 = new QToolButton();
     QToolButton *btn3 = new QToolButton();
     QToolButton *btn4 = new QToolButton();
-    btn1->setStyleSheet(btnStyle);
-    btn2->setStyleSheet(btnStyle);
-    btn3->setStyleSheet(btnStyle);
-    btn4->setStyleSheet(btnStyle);
+    btn1->setToolTip("tip1");
+    btn2->setToolTip("tip2");
+    btn3->setToolTip("tip3");
+    btn4->setToolTip("tip4");
 
-    btn1->setIcon(QIcon(":/res/png/play.png"));
-    btn2->setIcon(QIcon(":/res/png/pause.png"));
-    btn3->setIcon(QIcon(":/res/png/stop.png"));
-    btn4->setIcon(QIcon(":/res/png/recyclebin.png"));
+    QList<QToolButton*> btnList = {btn1, btn2, btn3, btn4};
+    QList<QString> iconList = {":/res/png/play.png", ":/res/png/pause.png", ":/res/png/stop.png", ":/res/png/recyclebin.png"};
+
+    for (int i=0; i<btnList.size(); ++i) {
+        QToolButton *btn = btnList[i];
+        btn->setFixedSize(24, 24); // 解决变形问题：设置固定的正方形尺寸
+        btn->setIconSize(QSize(18, 18)); // 稍微增大图标尺寸，使其在按钮内更显眼
+        btn->setStyleSheet(btnStyle);
+        btn->setIcon(QIcon(iconList[i]));
+        btn->setCursor(Qt::PointingHandCursor);
+        // 设置简单的策略防止拉伸
+        btn->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+    }
 
     btnLayout->addWidget(btn1);
     btnLayout->addWidget(btn2);

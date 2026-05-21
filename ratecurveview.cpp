@@ -3,6 +3,11 @@
 RateCurveView::RateCurveView(QWidget *parent) :
     QWidget(parent)
 {
+    // 初始化新增或未定义的成员变量
+    m_Traser = nullptr;
+    m_flowRate = 1.0; // 默认流量系数
+    m_type = 0;
+
     mPlot = new QCustomPlot(this);
 
     QVBoxLayout *verticalLayout = new QVBoxLayout(this);

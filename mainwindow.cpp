@@ -17,6 +17,11 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
 
+    // 初始化成员变量，防止未定义行为
+    m_TitleWdgt = nullptr;
+    m_IsMax = false;
+    m_bLeftButtonPressed = false;
+
     ui->menubar->hide();
     ui->statusbar->hide();
 
@@ -25,7 +30,6 @@ MainWindow::MainWindow(QWidget *parent)
 
 
     m_pMainWidget = new MainWidget(this);
-    QHBoxLayout *topLayout = new QHBoxLayout(m_pMainWidget);
     ui->verticalLayout->addWidget(m_pMainWidget);
 
     m_StatusWidget = new StatusWidget(this);

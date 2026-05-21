@@ -12,6 +12,7 @@ QMAKE_PROJECT_DEPTH = 0
 
 SOURCES += \
     aboutdialog.cpp \
+    advancedanalysiswidget.cpp \
     axisrange.cpp \
     chartselectwidget.cpp \
     configdialog.cpp \
@@ -29,13 +30,17 @@ SOURCES += \
     projectlistdialog.cpp \
     projectmgr.cpp \
     ratecurveview.cpp \
+    reportwidget.cpp \
     statuswidget.cpp \
+    systemsettingswidget.cpp \
     titlewdgt.cpp \
+    usercenterwidget.cpp \
     waterfallwdgttransf.cpp \
     wellwidget.cpp
 
 HEADERS += \
     aboutdialog.h \
+    advancedanalysiswidget.h \
     axisrange.h \
     chartselectwidget.h \
     configdialog.h \
@@ -53,13 +58,17 @@ HEADERS += \
     projectlistdialog.h \
     projectmgr.h \
     ratecurveview.h \
+    reportwidget.h \
     statuswidget.h \
+    systemsettingswidget.h \
     titlewdgt.h \
+    usercenterwidget.h \
     waterfallwdgttransf.h \
     wellwidget.h
 
 FORMS += \
     aboutdialog.ui \
+    advancedanalysiswidget.ui \
     axisrange.ui \
     chartselectwidget.ui \
     configdialog.ui \
@@ -71,8 +80,11 @@ FORMS += \
     mainwidget.ui \
     mainwindow.ui \
     projectlistdialog.ui \
+    reportwidget.ui \
     statuswidget.ui \
+    systemsettingswidget.ui \
     titlewdgt.ui \
+    usercenterwidget.ui \
     wellwidget.ui
 
 # Default rules for deployment.

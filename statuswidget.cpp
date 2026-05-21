@@ -64,7 +64,7 @@ StatusWidget::StatusWidget(QWidget *parent)
         }
 
         )";
-    ui->progressBar_disk->setStyleSheet(qssMemery);
+    ui->progressBar_mem->setStyleSheet(qssMemery);
 
 
     QString qssDisk = R"(
@@ -106,7 +106,7 @@ StatusWidget::StatusWidget(QWidget *parent)
             border-top-left-radius:8px;
             }
         )";
-    ui->progressBar_disk->setStyleSheet(qssDisk);
+    ui->progressBar_cpu->setStyleSheet(qssCpu);
 }
 
 

@@ -3,6 +3,10 @@
 #include "leftnavbar.h"
 #include "wellwidget.h"
 #include "filetreelistwidget.h"
+#include "advancedanalysiswidget.h"
+#include "usercenterwidget.h"
+#include "systemsettingswidget.h"
+#include "reportwidget.h"
 #include <QStackedWidget>
 
 MainWidget::MainWidget(QWidget *parent)
@@ -24,11 +28,20 @@ MainWidget::MainWidget(QWidget *parent)
 
     m_pWellWidget = new WellWidget(rightStack);
     m_pFileTreeListWidget = new FileTreeListWidget(rightStack);
+    m_pAnalysisWidget = new AdvancedAnalysisWidget(rightStack);
+    m_pUserCenterWidget = new UserCenterWidget(rightStack);
+    m_pSystemSettingsWidget = new SystemSettingsWidget(rightStack);
+    m_pReportWidget = new ReportWidget(rightStack);
 
+    // 必须与 LeftNavBar 中按钮添加的顺序一致 (ID 从 0 开始)
     rightStack->addWidget(m_pFileTreeListWidget);
     rightStack->addWidget(m_pWellWidget);
-
-    //ui->horizontalLayout->addWidget(m_stackedWidget);
+    
+    rightStack->addWidget(m_pReportWidget);        // ID 2: 报告
+    
+    rightStack->addWidget(m_pAnalysisWidget);      // ID 3: 分析
+    rightStack->addWidget(m_pUserCenterWidget);    // ID 4: 用户
+    rightStack->addWidget(m_pSystemSettingsWidget);// ID 5: 设置
 }
 
 MainWidget::~MainWidget()
@@ -38,6 +51,7 @@ MainWidget::~MainWidget()
 
 void MainWidget::setIndex(int index)
 {
+    qDebug()<<"setIndex"<<index;
     if (index >= 0 && index < rightStack->count())
         rightStack->setCurrentIndex(index);
 }

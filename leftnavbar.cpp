@@ -21,10 +21,11 @@ LeftNavBar::LeftNavBar(QWidget *parent)
     // ==========================================
     // 【顶部区域】：折叠控制 + 核心业务模块
     // ==========================================
-    btnToggle  = createButton(":/res/button/Home.png", "收起导航");
+
     btnWorkspace = createButton(":/res/button/user_switch.png", " 工区管理", true);
     btnMonitor   = createButton(":/res/button/curve_config.png", " 实时监测", true);
     btnReport    = createButton(":/res/button/software_config.png", " 成果报告", true);
+    btnAnalysis  = createButton(":/res/button/temp_query.png", " 高级分析", true);
 
 
     // 加一条淡淡的分割线
@@ -37,6 +38,7 @@ LeftNavBar::LeftNavBar(QWidget *parent)
     mainLayout->addWidget(btnWorkspace);
     mainLayout->addWidget(btnMonitor);
     mainLayout->addWidget(btnReport);
+    mainLayout->addWidget(btnAnalysis);
 
     btnWorkspace->setChecked(true); // 默认选中第一个
 
@@ -46,8 +48,8 @@ LeftNavBar::LeftNavBar(QWidget *parent)
     // ==========================================
     // 【底部区域】：系统设置、关于等按钮
     // ==========================================
-    btnUser = createButton(":/res/button/view_switch.png", " 个人中心");
-    btnSetting = createButton(":/res/button/software_config.png", " 系统设置");
+    btnUser = createButton(":/res/button/view_switch.png", " 个人中心", true);
+    btnSetting = createButton(":/res/button/software_config.png", " 系统设置", true);
 
     mainLayout->addWidget(btnUser);
     mainLayout->addWidget(btnSetting);
@@ -55,6 +57,7 @@ LeftNavBar::LeftNavBar(QWidget *parent)
 
     mainLayout->addStretch();
     mainLayout->addWidget(line);
+    btnToggle  = createButton(":/res/button/Home.png", "收起导航");
     mainLayout->addWidget(btnToggle);//伸缩按键放在最下边
     mainLayout->addWidget(line);
     // ==========================================
@@ -65,6 +68,7 @@ LeftNavBar::LeftNavBar(QWidget *parent)
 
     // 点击业务按钮（通知外部切换 QStackedWidget）
     connect(navGroup, &QButtonGroup::idClicked, this, [this](int id) {
+        qDebug()<<"QButtonGroup::idClicked"<<id;
         emit modulesChanged(id);
     });
 

@@ -37,7 +37,7 @@ private:
     QButtonGroup *navGroup;
     bool isExpanded = false;
 
-    QToolButton *btnToggle, *btnWorkspace, *btnMonitor, *btnReport, *btnUser, *btnSetting;
+    QToolButton *btnToggle, *btnWorkspace, *btnMonitor, *btnReport, *btnAnalysis, *btnUser, *btnSetting;
     QList<QToolButton*> allButtons;
 };
 
