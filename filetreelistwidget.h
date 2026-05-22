@@ -17,6 +17,7 @@
 #include <QPainterPath>
 #include <QProxyStyle>
 #include <QDebug>
+#include <QToolButton>
 
 // 自定义树控件展开/收起箭头：VS Code 风格的三角箭头
 class ArrowTreeStyle : public QProxyStyle {
@@ -173,6 +174,7 @@ private:
     void removeFolder(const QString& szPath);
     void removeTab(const QString &title, const QString &path);
     void createNewTab(const QString &title, const QString &path);
+    void loadProjectPath();
 
 private slots:
     void onTreeItemClicked(QTreeWidgetItem *item, int column);
@@ -193,6 +195,9 @@ private:
     QWidget *rightContainer;
 
     QStringList m_dasFileList;
+
+    QToolButton *addButton;
+    QToolButton *openButton;
 };
 
 #endif // FILETREELISTWIDGET_H

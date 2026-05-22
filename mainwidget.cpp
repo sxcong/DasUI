@@ -8,12 +8,15 @@
 #include "systemsettingswidget.h"
 #include "reportwidget.h"
 #include <QStackedWidget>
+#include "projectdb.h"
 
 MainWidget::MainWidget(QWidget *parent)
     : QWidget(parent)
     , ui(new Ui::MainWidget)
 {
     ui->setupUi(this);
+
+    ProjectDB::Instance().initDB();
 
     leftNavBar = new LeftNavBar(this);
     ui->horizontalLayout->addWidget(leftNavBar); // 塞入最左侧

@@ -14,6 +14,15 @@ ProjectListDialog::ProjectListDialog(QWidget *parent)
 {
     ui->setupUi(this);
 
+    // 设置对话框自身的样式，确保背景为深色，文字为浅色
+    this->setStyleSheet("QDialog { background-color: #141519; color: #FFFFFF; }"
+                        "QLabel { color: #FFFFFF; }" // 确保对话框内的 QLabel 文本为白色
+                        "QLineEdit { background-color: #2A2A2A; color: #FFFFFF; border: 1px solid #444; padding: 3px; border-radius: 3px; }" // 确保输入框可读
+                        "QPushButton { background-color: #3A3A3A; color: #FFFFFF; border: 1px solid #555; padding: 5px 10px; border-radius: 3px; }"
+                        "QPushButton:hover { background-color: #4A4A4A; }"
+                        "QPushButton:pressed { background-color: #2A2A2A; }"
+                       );
+
     // 创建表格
     m_pTableWidget = new QTableWidget(this);
     m_pTableWidget->setColumnCount(3);
@@ -23,11 +32,34 @@ ProjectListDialog::ProjectListDialog(QWidget *parent)
     m_pTableWidget->setSelectionBehavior(QAbstractItemView::SelectRows); // 整行选中
     // 美化表格样式 (符合整体深色/简洁风格)
     m_pTableWidget->setStyleSheet(
-        "QHeaderView::section { background-color: #F0F0F0; padding: 4px; border: 1px solid #DCDCDC; }"
-        "QTableWidget { gridline-color: #F0F0F0; border: none; }"
+        "QTableWidget {"
+        "   background-color: #1A1C23;" // 表格主体背景色
+        "   color: #D1D1D1;"            // 表格文字颜色
+        "   gridline-color: #333333;"   // 网格线颜色
+        "   border: none;"              // 无边框
+        "   outline: none;"             // 移除焦点虚线框
+        "}"
+        "QTableWidget::item {"
+        "   background-color: #1A1C23;" // 单元格背景色
+        "   color: #D1D1D1;"            // 单元格文字颜色
+        "   padding: 5px;"              // 单元格内边距
+        "}"
+        "QTableWidget::item:selected {"
+        "   background-color: #2E436E;" // 选中单元格背景色
+        "   color: #FFFFFF;"            // 选中单元格文字颜色
+        "}"
+        "QHeaderView::section {"
+        "   background-color: #222222;" // 表头背景色
+        "   color: #FFFFFF;"            // 表头文字颜色
+        "   padding: 4px;"
+        "   border: 1px solid #333333;" // 表头边框
+        "   font-weight: bold;"
+        "}"
+        "QTableCornerButton::section {" // 表格左上角空白区域的样式
+        "   background-color: #222222;"
+        "   border: 1px solid #333333;"
+        "}"
         );
-
-
     QHeaderView *header = m_pTableWidget->horizontalHeader();
     // 1. 允许用户手动拖动改变列宽
     header->setSectionsMovable(false); // 是否允许交换列顺序（可选）
@@ -196,7 +228,12 @@ void ProjectListDialog::on_btnOk_clicked()
 
     // 2. 通过行号，强制获取第 0 列（名字列）的 Item
     QTableWidgetItem *nameItem = m_pTableWidget->item(row, 0);
-    ProjectMgr::Instance().m_curProjectName = nameItem->text();
+    ProjectData prjData;
+    prjData.name = nameItem->text();
+
+    QTableWidgetItem* memoItem = m_pTableWidget->item(row, 1);
+    prjData.memo = memoItem->text();
+    ProjectMgr::Instance().projectOpen(prjData);
     qDebug() << "该行对应的名字是：" << nameItem->text();
 
     accept();
@@ -207,4 +244,3 @@ void ProjectListDialog::on_btnCancel_clicked()
 {
     reject();
 }
-

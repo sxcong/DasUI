@@ -91,6 +91,20 @@ FORMS += \
 include($$PWD/qcustomplot/qcustomplot.pri)
 include($$PWD/wellStructure/wellStructure.pri)
 
+CONFIG(release, debug|release){
+    TARGET = DasUI
+    DESTDIR=$$PWD/bin/Release
+    LIBS += -L$$PWD/lib/Release
+      #TRANSLATIONS += $$PWD/../Bin/Release/translations/das_qt_cn.ts
+}
+
+CONFIG(debug, debug|release){
+    TARGET = DasUI_d
+    DESTDIR=$$PWD/bin/Debug
+    LIBS += -L$$PWD/lib/Debug
+    #TRANSLATIONS += $$PWD/../Bin/Debug/translations/das_qt_cn.ts
+}
+
 # 开启 OpenMP 支持
 # 针对 Microsoft Visual C++ (MSVC) 编译器
 msvc {

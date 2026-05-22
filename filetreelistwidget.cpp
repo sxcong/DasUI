@@ -12,6 +12,8 @@
 #include <QLabel>
 #include <QToolButton>
 #include "filelistwidget.h"
+#include "projectmgr.h"
+#include "projectlistdialog.h"
 
 FileTreeListWidget::FileTreeListWidget(QWidget *parent)
     : QWidget(parent)
@@ -24,8 +26,7 @@ FileTreeListWidget::FileTreeListWidget(QWidget *parent)
     ui->widget_right->setObjectName("widget_right");
 
     setupCentralLayout();
-
-    return;
+    //loadProjectPath();
 }
 
 FileTreeListWidget::~FileTreeListWidget()
@@ -33,6 +34,41 @@ FileTreeListWidget::~FileTreeListWidget()
     delete ui;
 }
 
+void FileTreeListWidget::loadProjectPath()
+{
+    // 清空旧树和 Tab，防止重复调用时残留
+    ui->treeWidget->clear();
+    tabWidget->clear();
+
+    QTreeWidgetItem *rootItem = new QTreeWidgetItem(ui->treeWidget);
+    QString projectName = "工区:" + ProjectMgr::Instance().m_curProjectName;
+    rootItem->setText(0, projectName);
+
+    wellItem = new QTreeWidgetItem(rootItem, QStringList() << "井信息");
+    wellItem->setData(0, Qt::UserRole, 0);
+    wellItem->setIcon(0, QIcon(":/res/png/das.png"));
+
+    dasItem = new QTreeWidgetItem(rootItem, QStringList() << "DAS 监控模块");
+    dasItem->setData(0, Qt::UserRole, 1);
+    dasItem->setIcon(0, QIcon(":/res/png/das.png"));
+
+    dtsItem = new QTreeWidgetItem(rootItem, QStringList() << "DTS 监测模块");
+    dtsItem->setData(0, Qt::UserRole, 2);
+    dtsItem->setIcon(0, QIcon(":/res/png/dts.png"));
+
+    QStringList pathList;
+    ProjectMgr::Instance().getProjectPath(pathList);
+    for (const QString &str : pathList) {
+        QDir directory(str);
+        QTreeWidgetItem *item = new QTreeWidgetItem(dasItem);
+        item->setText(0, directory.dirName());
+        item->setToolTip(0, str);
+        item->setIcon(0, QIcon(":/res/png/import.png"));
+        item->setData(0, Qt::UserRole, str);
+        createNewTab(directory.dirName(), str);
+    }
+    ui->treeWidget->expandAll();
+}
 
 void FileTreeListWidget::setupCentralLayout() {
     //--root
@@ -83,51 +119,46 @@ void FileTreeListWidget::setupCentralLayout() {
         }
         )";
 
-        QToolButton *addButton = new QToolButton(ui->widget);
-        addButton->setText("+ 导入");
+        addButton = new QToolButton(ui->widget);
+        addButton->setText("添加工区");
         addButton->setToolTip("添加工区");
         addButton->setStyleSheet(btnCommon);
 
-        QToolButton *delButton = new QToolButton(ui->widget);
-        delButton->setText("× 移除");
-        delButton->setToolTip("删除工区");
-        delButton->setStyleSheet(btnCommon);
+        openButton = new QToolButton(ui->widget);
+        openButton->setText("打开工区");
+        openButton->setToolTip("打开工区");
+        openButton->setStyleSheet(btnCommon);
 
         headerLayout->addStretch();
         headerLayout->addWidget(addButton);
-        headerLayout->addWidget(delButton);
+        headerLayout->addWidget(openButton);
+
+        connect(addButton, &QToolButton::clicked, this, [=]() {
+            ProjectListDialog dlg;
+            dlg.setRole(0);
+            dlg.refreshList();
+            if (dlg.exec() == QDialog::Accepted)
+            {
+            }
+        });
+        connect(openButton, &QToolButton::clicked, this, [=]() {
+            ProjectListDialog dlg;
+            dlg.setRole(1);
+            dlg.refreshList();
+            if (dlg.exec() == QDialog::Accepted)
+            {
+                //setupCentralLayout();
+                loadProjectPath();
+            }
+        });
     }
 
-    QIcon folderIcon;
-    folderIcon.addFile(":/res/png/datarootnode.png", QSize(), QIcon::Normal, QIcon::Off);
-    //folderIcon.addFile(":/icons/datarootnode.png", QSize(), QIcon::Normal, QIcon::On);
-    // --- 左侧：树形控件 ---
-    //leftTree = new QTreeWidget(ui->widget_left);
+    // --- 左侧：树形控件（节点由 loadProjectPath 创建）---
     ui->treeWidget->setHeaderHidden(true);
-    ui->treeWidget->setHeaderLabel("工区--" );
     ui->treeWidget->setIconSize(QSize(20, 20));
-
     ui->treeWidget->setIndentation(20);
     ui->treeWidget->setFrameShape(QFrame::NoFrame);
     ui->treeWidget->setStyle(new ArrowTreeStyle);
-
-
-    QTreeWidgetItem *rootItem = new QTreeWidgetItem(ui->treeWidget);
-    rootItem->setText(0, "数据");
-    // 去掉数据库图标，只用分支箭头（ArrowTreeStyle 提供 ▾/▸）
-
-    // 创建节点并关联索引（使用 Data 角色存储索引）
-    wellItem = new QTreeWidgetItem(rootItem, QStringList() << "井信息");
-    wellItem->setData(0, Qt::UserRole, 0); // 对应 stackWidget 的第 0 页
-    wellItem->setIcon(0, QIcon(":/res/png/das.png")); // 设置第一列的图标
-
-    dasItem = new QTreeWidgetItem(rootItem, QStringList() << "DAS 监控模块");
-    dasItem->setData(0, Qt::UserRole, 1); // 对应 stackWidget 的第 0 页
-    dasItem->setIcon(0, QIcon(":/res/png/das.png")); // 设置第一列的图标
-
-    dtsItem = new QTreeWidgetItem(rootItem, QStringList() << "DTS 监测模块");
-    dtsItem->setData(0, Qt::UserRole, 2); // 对应 stackWidget 的第 1 页
-    dtsItem->setIcon(0, QIcon(":/res/png/dts.png")); // 设置第一列的图标
 
     // 2. 右侧 Tab 控件
     tabWidget = new QTabWidget(ui->widget_right);
@@ -139,7 +170,7 @@ void FileTreeListWidget::setupCentralLayout() {
     rightWidgetLayout->addWidget(tabWidget);           // 让 tabWidget 自动缩放撑满右侧
 
 
-    connect(tabWidget, &QTabWidget::tabCloseRequested, tabWidget, &QTabWidget::removeTab);
+   // connect(tabWidget, &QTabWidget::tabCloseRequested, tabWidget, &QTabWidget::removeTab);
 
     // --- 组装 ---
     mainSplitter->addWidget(ui->widget_left);
@@ -148,11 +179,9 @@ void FileTreeListWidget::setupCentralLayout() {
     //this->setCentralWidget(mainSplitter);
 
     // 绑定信号槽：点击树节点切换页面
-    connect(ui->treeWidget, &QTreeWidget::itemClicked, this, &FileTreeListWidget::onTreeItemClicked);
     ui->treeWidget->setContextMenuPolicy(Qt::CustomContextMenu);
-    connect(ui->treeWidget, &QTreeWidget::customContextMenuRequested, this, &FileTreeListWidget::showTreeContextMenu);
     connect(ui->treeWidget, &QTreeWidget::itemClicked, this, &FileTreeListWidget::onTreeItemClicked);
-    ui->treeWidget->expandAll();
+    connect(ui->treeWidget, &QTreeWidget::customContextMenuRequested, this, &FileTreeListWidget::showTreeContextMenu);
 
     // === 暗色主题 QSS ===
     ui->widget_left->setStyleSheet(R"(
@@ -285,7 +314,7 @@ void FileTreeListWidget::showTreeContextMenu(const QPoint &pos)
 void FileTreeListWidget::removeFolder(const QString& szPath)
 {
     qDebug()<<"removeFolder"<<szPath;
-   // ProjectMgr::Instance().deleteProjectPath(szPath);
+    ProjectMgr::Instance().deleteProjectPath(szPath);
 
 }
 
@@ -310,8 +339,8 @@ void FileTreeListWidget::importFolder() {
     item->setData(0, Qt::UserRole, dirPath);
 
     createNewTab(directory.dirName(), dirPath);
-   // bool bRet = ProjectMgr::Instance().addProjectPath(dirPath);
-   // qDebug()<<"addProjectPath"<<dirPath<<bRet;
+    bool bRet = ProjectMgr::Instance().addProjectPath(dirPath);
+    // qDebug()<<"addProjectPath"<<dirPath<<bRet;
 }
 
 
@@ -342,17 +371,17 @@ void FileTreeListWidget::showGeneralContextMenu(QTableWidget* table, const QPoin
 
     QAction *act1 = new QAction("分频能量-频谱分析", &menu);
     connect(act1, &QAction::triggered, this, [=]() {
-       // DASFBECurveFFTDlg dlg;
-       // dlg.setF5File(szFile);
-       // dlg.exec();
+        // DASFBECurveFFTDlg dlg;
+        // dlg.setF5File(szFile);
+        // dlg.exec();
     });
 
     QAction *act2 = new QAction("LF-DAS瀑布图", &menu);
     connect(act2, &QAction::triggered, this, [=]() {
         //LF_DAS_Dlg dlg;
 
-       // dlg.setH5File(szFile);
-       // dlg.exec();
+        // dlg.setH5File(szFile);
+        // dlg.exec();
     });
 
     QAction *act3 = new QAction("FBE分频能量瀑布图", &menu);
@@ -364,9 +393,9 @@ void FileTreeListWidget::showGeneralContextMenu(QTableWidget* table, const QPoin
     QAction *act4 = new QAction("F-K", &menu);
     connect(act4, &QAction::triggered, this, [=]() {
         qDebug()<<"szFile = "<<szFile;
-       // FKDemoDialog dlg;
-       // dlg.setH5File(szFile);
-       // dlg.exec();
+        // FKDemoDialog dlg;
+        // dlg.setH5File(szFile);
+        // dlg.exec();
     });
 
     menu.addAction(act1);
@@ -389,6 +418,5 @@ void FileTreeListWidget::createNewTab(const QString &title, const QString &path)
         int index = tabWidget->addTab(pWidget, title);
         tabWidget->setCurrentIndex(index);
     }
-    return;  
+    return;
 }
-
