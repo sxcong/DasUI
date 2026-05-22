@@ -1,10 +1,5 @@
 #include "projectmgr.h"
 
-void ProjectFile::setDASPath(const QString& path, const QStringList& list)
-{
-    dasFileList[path] = list;
-}
-
 ProjectMgr::ProjectMgr() {}
 
 ProjectMgr &ProjectMgr::Instance()

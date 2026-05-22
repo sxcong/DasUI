@@ -25,8 +25,8 @@ ProjectListDialog::ProjectListDialog(QWidget *parent)
 
     // 创建表格
     m_pTableWidget = new QTableWidget(this);
-    m_pTableWidget->setColumnCount(3);
-    m_pTableWidget->setHorizontalHeaderLabels({"文件名", "大小", "修改时间"});
+    m_pTableWidget->setColumnCount(4);
+    m_pTableWidget->setHorizontalHeaderLabels({"工区名", "大小","文件目录", "修改时间"});
    // m_pTableWidget->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
     m_pTableWidget->setEditTriggers(QAbstractItemView::NoEditTriggers); // 禁止编辑
     m_pTableWidget->setSelectionBehavior(QAbstractItemView::SelectRows); // 整行选中

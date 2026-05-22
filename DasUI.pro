@@ -20,6 +20,7 @@ SOURCES += \
     filelistwidget.cpp \
     filetreelistwidget.cpp \
     global.cpp \
+    hd5reader.cpp \
     informationwgt.cpp \
     leftnavbar.cpp \
     main.cpp \
@@ -49,6 +50,7 @@ HEADERS += \
     filelistwidget.h \
     filetreelistwidget.h \
     global.h \
+    hd5reader.h \
     informationwgt.h \
     leftnavbar.h \
     mainwidget.h \
@@ -87,6 +89,13 @@ FORMS += \
     usercenterwidget.ui \
     wellwidget.ui
 
+# Eigen
+INCLUDEPATH += $$PWD/include/
+# HDF5
+INCLUDEPATH += $$PWD/include/hdf5
+INCLUDEPATH += $$PWD/include/Eigen
+
+
 # Default rules for deployment.
 include($$PWD/qcustomplot/qcustomplot.pri)
 include($$PWD/wellStructure/wellStructure.pri)
@@ -94,14 +103,14 @@ include($$PWD/wellStructure/wellStructure.pri)
 CONFIG(release, debug|release){
     TARGET = DasUI
     DESTDIR=$$PWD/bin/Release
-    LIBS += -L$$PWD/lib/Release
+    LIBS += -L$$PWD/lib/Release -lhdf5 -lhdf5_cpp
       #TRANSLATIONS += $$PWD/../Bin/Release/translations/das_qt_cn.ts
 }
 
 CONFIG(debug, debug|release){
     TARGET = DasUI_d
     DESTDIR=$$PWD/bin/Debug
-    LIBS += -L$$PWD/lib/Debug
+    LIBS += -L$$PWD/lib/Debug  -lhdf5 -lhdf5_cpp
     #TRANSLATIONS += $$PWD/../Bin/Debug/translations/das_qt_cn.ts
 }
 

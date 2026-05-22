@@ -26,7 +26,6 @@ FileTreeListWidget::FileTreeListWidget(QWidget *parent)
     ui->widget_right->setObjectName("widget_right");
 
     setupCentralLayout();
-    //loadProjectPath();
 }
 
 FileTreeListWidget::~FileTreeListWidget()
@@ -147,7 +146,6 @@ void FileTreeListWidget::setupCentralLayout() {
             dlg.refreshList();
             if (dlg.exec() == QDialog::Accepted)
             {
-                //setupCentralLayout();
                 loadProjectPath();
             }
         });
@@ -411,12 +409,10 @@ void FileTreeListWidget::showGeneralContextMenu(QTableWidget* table, const QPoin
 
 void FileTreeListWidget::createNewTab(const QString &title, const QString &path)
 {
-    {
-        FileListWidget* pWidget = new FileListWidget();
-        pWidget->setProperty("folderPath", path);
-        pWidget->setPath(title, path);
-        int index = tabWidget->addTab(pWidget, title);
-        tabWidget->setCurrentIndex(index);
-    }
+    FileListWidget* pWidget = new FileListWidget();
+    pWidget->setProperty("folderPath", path);
+    pWidget->setPath(title, path);
+    int index = tabWidget->addTab(pWidget, title);
+    tabWidget->setCurrentIndex(index);
     return;
 }

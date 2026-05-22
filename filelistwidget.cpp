@@ -21,6 +21,8 @@
 #include <QToolButton>
 #include <QPushButton>
 #include <QStyleFactory>
+#include <QMessageBox>
+#include "projectmgr.h"
 
 
 FileListWidget::FileListWidget(QWidget *parent)
@@ -403,14 +405,22 @@ QWidget* FileListWidget::createCustomRowWidget(const QString &fileName, const QS
                        "QToolButton:pressed { background-color: #333; border: 1px solid #222; }";
 
     // 这里模拟你的 1 2 3 dowr 按钮
-    QToolButton *btn1 = new QToolButton();
-    QToolButton *btn2 = new QToolButton();
-    QToolButton *btn3 = new QToolButton();
-    QToolButton *btn4 = new QToolButton();
+    QToolButton *btn1 = new QToolButton(this);
+    QToolButton *btn2 = new QToolButton(this);
+    QToolButton *btn3 = new QToolButton(this);
+    QToolButton *btn4 = new QToolButton(this);
     btn1->setToolTip("tip1");
     btn2->setToolTip("tip2");
     btn3->setToolTip("tip3");
     btn4->setToolTip("tip4");
+    QString path = this->property("folderPath").toString();
+    connect(btn1, &QToolButton::clicked, this, [=]() {
+        //open fileName
+
+        QString szName = path + fileName;
+        QMessageBox::information(this, "", szName);
+
+    });
 
     QList<QToolButton*> btnList = {btn1, btn2, btn3, btn4};
     QList<QString> iconList = {":/res/png/play.png", ":/res/png/pause.png", ":/res/png/stop.png", ":/res/png/recyclebin.png"};
@@ -430,6 +440,8 @@ QWidget* FileListWidget::createCustomRowWidget(const QString &fileName, const QS
     btnLayout->addWidget(btn2);
     btnLayout->addWidget(btn3);
     btnLayout->addWidget(btn4);
+
+
 
     // --- 将所有区域加入主布局 ---
     leftWidget->hide();
