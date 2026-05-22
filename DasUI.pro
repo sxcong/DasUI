@@ -17,6 +17,7 @@ SOURCES += \
     chartselectwidget.cpp \
     configdialog.cpp \
     curveview.cpp \
+    fbeplotdialog.cpp \
     filelistwidget.cpp \
     filetreelistwidget.cpp \
     global.cpp \
@@ -37,6 +38,7 @@ SOURCES += \
     titlewdgt.cpp \
     usercenterwidget.cpp \
     waterfallwdgttransf.cpp \
+    waterfalldialog.cpp \
     wellwidget.cpp
 
 HEADERS += \
@@ -47,6 +49,7 @@ HEADERS += \
     configdialog.h \
     curveview.h \
     defines.h \
+    fbeplotdialog.h \
     filelistwidget.h \
     filetreelistwidget.h \
     global.h \
@@ -66,6 +69,7 @@ HEADERS += \
     titlewdgt.h \
     usercenterwidget.h \
     waterfallwdgttransf.h \
+    waterfalldialog.h \
     wellwidget.h
 
 FORMS += \
@@ -103,14 +107,14 @@ include($$PWD/wellStructure/wellStructure.pri)
 CONFIG(release, debug|release){
     TARGET = DasUI
     DESTDIR=$$PWD/bin/Release
-    LIBS += -L$$PWD/lib/Release -lhdf5 -lhdf5_cpp
+    LIBS += -L$$PWD/lib/Release -lhdf5 -lhdf5_cpp -lfftw3f
       #TRANSLATIONS += $$PWD/../Bin/Release/translations/das_qt_cn.ts
 }
 
 CONFIG(debug, debug|release){
     TARGET = DasUI_d
     DESTDIR=$$PWD/bin/Debug
-    LIBS += -L$$PWD/lib/Debug  -lhdf5 -lhdf5_cpp
+    LIBS += -L$$PWD/lib/Debug  -lhdf5 -lhdf5_cpp -lfftw3f
     #TRANSLATIONS += $$PWD/../Bin/Debug/translations/das_qt_cn.ts
 }
 

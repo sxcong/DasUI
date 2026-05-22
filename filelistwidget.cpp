@@ -1,6 +1,8 @@
 #include "filelistwidget.h"
 #include "ui_filelistwidget.h"
+#include "waterfalldialog.h"
 #include <QDir>
+#include "fbeplotdialog.h" // Include the new FBE plot dialog
 #include <QDebug>
 #include <QFileInfo>
 #include <QDateTime>
@@ -68,6 +70,7 @@ void FileListWidget::setPath(const QString &title, const QString &path)
     m_title = title;
     m_path = path;
 
+    m_dasFileList.clear();
     QDir dir(path);
     dir.setNameFilters(QStringList() << "*.h5");
     // QDir::Files 表示只列出文件（不包含目录）
@@ -413,13 +416,25 @@ QWidget* FileListWidget::createCustomRowWidget(const QString &fileName, const QS
     btn2->setToolTip("tip2");
     btn3->setToolTip("tip3");
     btn4->setToolTip("tip4");
-    QString path = this->property("folderPath").toString();
-    connect(btn1, &QToolButton::clicked, this, [=]() {
-        //open fileName
 
-        QString szName = path + fileName;
-        QMessageBox::information(this, "", szName);
 
+    connect(btn1, &QToolButton::clicked, this, [fileName, this]() {
+        QString folderPath = this->property("folderPath").toString();
+        QString szFullFile = QDir::toNativeSeparators(QDir(folderPath).absoluteFilePath(fileName));
+        WaterfallDialog *dlg = new WaterfallDialog(szFullFile, this);
+        dlg->setAttribute(Qt::WA_DeleteOnClose);
+        dlg->show();
+    });
+
+    connect(btn2, &QToolButton::clicked, this, [fileName, this]() {
+        QApplication::setOverrideCursor(Qt::WaitCursor);
+        QString folderPath = this->property("folderPath").toString();
+        QString szFullFile = QDir::toNativeSeparators(QDir(folderPath).absoluteFilePath(fileName));
+        // Open FBE Plot dialog
+        FbePlotDialog *dlg = new FbePlotDialog(szFullFile, this);
+        dlg->setAttribute(Qt::WA_DeleteOnClose);
+        dlg->show();
+        QApplication::restoreOverrideCursor();
     });
 
     QList<QToolButton*> btnList = {btn1, btn2, btn3, btn4};
