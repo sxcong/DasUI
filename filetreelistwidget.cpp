@@ -14,6 +14,11 @@
 #include "filelistwidget.h"
 #include "projectmgr.h"
 #include "projectlistdialog.h"
+#include "convertsetupdlg.h"
+#include "lfdaswidget.h"
+#include "fbeenergywidget.h"
+#include "downsamplewidget.h"
+#include "spectrumdbwidget.h"
 
 FileTreeListWidget::FileTreeListWidget(QWidget *parent)
     : QWidget(parent)
@@ -294,6 +299,9 @@ void FileTreeListWidget::showTreeContextMenu(const QPoint &pos)
                 // 创建“移除DAS数据”动作并添加图标
                 QAction *removeAction = new QAction(QIcon(":/res/png/import.png"), "移除DAS数据", this);
                 menu.addAction(removeAction);
+
+                QAction *convertAction = new QAction(QIcon(":/res/png/import.png"), "批量转换", this);
+                menu.addAction(convertAction);
                 // 获取点击位置的动作
                 QAction *selectedAction = menu.exec(ui->treeWidget->mapToGlobal(pos));
                 if (selectedAction == removeAction) {
@@ -303,6 +311,12 @@ void FileTreeListWidget::showTreeContextMenu(const QPoint &pos)
                     //leftTree->removeItemWidget(item, 0);
                     root->removeChild(item);
                     delete item;
+                }
+                else if (selectedAction == convertAction) {
+                    QString str = item->data(0, Qt::UserRole).toString();
+                    ConvertSetupDlg dlg;
+                    dlg.setInputPath(str);
+                    dlg.exec();
                 }
             }
         }
@@ -356,6 +370,103 @@ void FileTreeListWidget::removeTab(const QString &title, const QString &path)
         }
     }
 }
+
+QString FileTreeListWidget::currentFolderPath() const
+{
+    if (tabWidget && tabWidget->currentWidget()) {
+        const QString path = tabWidget->currentWidget()->property("folderPath").toString();
+        if (!path.isEmpty()) {
+            return path;
+        }
+    }
+
+    QTreeWidgetItem *item = ui->treeWidget->currentItem();
+    if (item) {
+        const QString path = item->data(0, Qt::UserRole).toString();
+        if (!path.isEmpty() && QDir(path).exists()) {
+            return path;
+        }
+        const QString tooltipPath = item->toolTip(0);
+        if (!tooltipPath.isEmpty() && QDir(tooltipPath).exists()) {
+            return tooltipPath;
+        }
+    }
+
+    return QDir::homePath();
+}
+
+void FileTreeListWidget::openLfDasFilesFromCurrentFolder()
+{
+    const QStringList files = QFileDialog::getOpenFileNames(
+        this,
+        "选择 LF-DAS 二进制文件",
+        currentFolderPath(),
+        "LF-DAS Binary (*.lfdas *.bin);;All Files (*)");
+    if (files.isEmpty()) {
+        return;
+    }
+
+    auto* widget = new LfDasWidget();
+    widget->setAttribute(Qt::WA_DeleteOnClose);
+    widget->resize(1200, 720);
+    widget->setFiles(files);
+    widget->show();
+}
+
+void FileTreeListWidget::openFbeEnergyFilesFromCurrentFolder()
+{
+    const QStringList files = QFileDialog::getOpenFileNames(
+        this,
+        "选择 FBE 分频能量二进制文件",
+        currentFolderPath(),
+        "FBE Binary (*.fbe);;Binary Files (*.bin);;All Files (*)");
+    if (files.isEmpty()) {
+        return;
+    }
+
+    auto* widget = new FbeEnergyWidget();
+    widget->setAttribute(Qt::WA_DeleteOnClose);
+    widget->resize(1200, 720);
+    widget->setFiles(files);
+    widget->show();
+}
+
+void FileTreeListWidget::openDownsampleFilesFromCurrentFolder()
+{
+    const QStringList files = QFileDialog::getOpenFileNames(
+        this,
+        "选择降采样二进制文件",
+        currentFolderPath(),
+        "Downsample Binary (*.down);;Binary Files (*.bin);;All Files (*)");
+    if (files.isEmpty()) {
+        return;
+    }
+
+    auto* widget = new DownsampleWidget();
+    widget->setAttribute(Qt::WA_DeleteOnClose);
+    widget->resize(1200, 720);
+    widget->setFiles(files);
+    widget->show();
+}
+
+void FileTreeListWidget::openSpectrumDbFilesFromCurrentFolder()
+{
+    const QStringList files = QFileDialog::getOpenFileNames(
+        this,
+        "选择 spectrum_db 二进制文件",
+        currentFolderPath(),
+        "Spectrum DB (*.spectrum_db);;Binary Files (*.bin);;All Files (*)");
+    if (files.isEmpty()) {
+        return;
+    }
+
+    auto* widget = new SpectrumDbWidget();
+    widget->setAttribute(Qt::WA_DeleteOnClose);
+    widget->resize(1200, 720);
+    widget->setFiles(files);
+    widget->show();
+}
+
 // 通用处理函数
 void FileTreeListWidget::showGeneralContextMenu(QTableWidget* table, const QPoint &pos) {
 

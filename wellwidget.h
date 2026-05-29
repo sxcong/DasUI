@@ -2,6 +2,7 @@
 #define WELLWIDGET_H
 
 #include <QWidget>
+class SpectrumAnalysisWidget;
 
 namespace Ui {
 class WellWidget;
@@ -28,6 +29,7 @@ private slots:
     void slot_checkBox_PhaseWaterfallPlot(bool bCheck);
 private:
     Ui::WellWidget *ui;
+    SpectrumAnalysisWidget* m_pSpectrumAnalysisWidget;
 };
 
 #endif // WELLWIDGET_H

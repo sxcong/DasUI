@@ -169,12 +169,19 @@ public:
     explicit FileTreeListWidget(QWidget *parent = nullptr);
     ~FileTreeListWidget();
 
+public slots:
+    void openLfDasFilesFromCurrentFolder();
+    void openFbeEnergyFilesFromCurrentFolder();
+    void openDownsampleFilesFromCurrentFolder();
+    void openSpectrumDbFilesFromCurrentFolder();
+
 private:
     void setupCentralLayout();
     void removeFolder(const QString& szPath);
     void removeTab(const QString &title, const QString &path);
     void createNewTab(const QString &title, const QString &path);
     void loadProjectPath();
+    QString currentFolderPath() const;
 
 private slots:
     void onTreeItemClicked(QTreeWidgetItem *item, int column);

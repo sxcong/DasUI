@@ -105,6 +105,10 @@ void MainWindow::showEvent(QShowEvent *event)
         connect(m_TitleWdgt,&TitleWdgt::signal_tBtn_Process_clicked,this,&MainWindow::slot_tBtn_Process_clicked);
         connect(m_TitleWdgt,&TitleWdgt::signal_tBtn_Analysis_clicked,this,&MainWindow::slot_tBtn_Analysis_clicked);
         connect(m_TitleWdgt,&TitleWdgt::signal_tbtn_Report_clicked,this,&MainWindow::slot_tbtn_Report_clicked);
+        connect(m_TitleWdgt,&TitleWdgt::signal_btn_OpenLfDas_clicked,m_pMainWidget,&MainWidget::openLfDasFiles);
+        connect(m_TitleWdgt,&TitleWdgt::signal_btn_OpenFbeEnergy_clicked,m_pMainWidget,&MainWidget::openFbeEnergyFiles);
+        connect(m_TitleWdgt,&TitleWdgt::signal_btn_OpenDownsample_clicked,m_pMainWidget,&MainWidget::openDownsampleFiles);
+        connect(m_TitleWdgt,&TitleWdgt::signal_btn_OpenSpectrumDb_clicked,m_pMainWidget,&MainWidget::openSpectrumDbFiles);
 
 /*      connect(m_TitleWdgt,&TitleWdgt::signal_tBtn_DataAnalysis_clicked,this,&MainWindow::slot_tBtn_DataAnalysis_clicked);
         connect(m_TitleWdgt,&TitleWdgt::signal_tBtn_Alarmconfig_clicked,this,&MainWindow::slot_tBtn_Alarmconfig_clicked);

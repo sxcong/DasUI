@@ -14,9 +14,13 @@ SOURCES += \
     aboutdialog.cpp \
     advancedanalysiswidget.cpp \
     axisrange.cpp \
+    binary_file_merger.cpp \
     chartselectwidget.cpp \
     configdialog.cpp \
+    convertsetupdlg.cpp \
     curveview.cpp \
+    downsamplewidget.cpp \
+    fbeenergywidget.cpp \
     fbeplotdialog.cpp \
     filelistwidget.cpp \
     filetreelistwidget.cpp \
@@ -24,6 +28,7 @@ SOURCES += \
     hd5reader.cpp \
     informationwgt.cpp \
     leftnavbar.cpp \
+    lfdaswidget.cpp \
     main.cpp \
     mainwidget.cpp \
     mainwindow.cpp \
@@ -33,6 +38,8 @@ SOURCES += \
     projectmgr.cpp \
     ratecurveview.cpp \
     reportwidget.cpp \
+    spectrumanalysiswidget.cpp \
+    spectrumdbwidget.cpp \
     statuswidget.cpp \
     systemsettingswidget.cpp \
     titlewdgt.cpp \
@@ -45,10 +52,14 @@ HEADERS += \
     aboutdialog.h \
     advancedanalysiswidget.h \
     axisrange.h \
+    binary_file_merger.h \
     chartselectwidget.h \
     configdialog.h \
+    convertsetupdlg.h \
     curveview.h \
     defines.h \
+    downsamplewidget.h \
+    fbeenergywidget.h \
     fbeplotdialog.h \
     filelistwidget.h \
     filetreelistwidget.h \
@@ -56,6 +67,7 @@ HEADERS += \
     hd5reader.h \
     informationwgt.h \
     leftnavbar.h \
+    lfdaswidget.h \
     mainwidget.h \
     mainwindow.h \
     pointtracer.h \
@@ -64,6 +76,8 @@ HEADERS += \
     projectmgr.h \
     ratecurveview.h \
     reportwidget.h \
+    spectrumanalysiswidget.h \
+    spectrumdbwidget.h \
     statuswidget.h \
     systemsettingswidget.h \
     titlewdgt.h \
@@ -78,6 +92,7 @@ FORMS += \
     axisrange.ui \
     chartselectwidget.ui \
     configdialog.ui \
+    convertsetupdlg.ui \
     curveview.ui \
     filelistwidget.ui \
     filetreelistwidget.ui \

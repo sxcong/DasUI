@@ -2,8 +2,11 @@
 #include "ui_titlewdgt.h"
 #include <QButtonGroup>
 #include <QDebug>
+#include <QHBoxLayout>
+#include <QIcon>
 #include <QMenu>
 #include <QMouseEvent>
+#include <QToolButton>
 #include "aboutdialog.h"
 #include <QScreen>
 //#include "globalmodule.h"
@@ -28,13 +31,13 @@ TitleWdgt::TitleWdgt(QWidget *parent) :
     connect(pAct1, &QAction::triggered, [=]{});
     connect(pAct2, &QAction::triggered, [=]{});
     connect(pAct3, &QAction::triggered, [=]{
-        newinfo->setWindowModality(Qt::ApplicationModal);
-        newinfo->show();
+       // newinfo->setWindowModality(Qt::ApplicationModal);
+       // newinfo->show();
     });
     connect(pAct4, &QAction::triggered, [=]{});
     connect(pAct5, &QAction::triggered, [=]{
-        AboutDialog d(this);
-        d.exec();
+        //AboutDialog d(this);
+        //d.exec();
     });
     m_pSetMenu->addAction(pAct1);
     m_pSetMenu->addAction(pAct2);
@@ -60,13 +63,80 @@ TitleWdgt::TitleWdgt(QWidget *parent) :
     connect(navGroup, QOverload<int>::of(&QButtonGroup::buttonClicked), this, [=](int id) {
         switch (id) {
         case 0: emit signal_tBtn_DataImport_clicked(); break;
-        case 1: emit signal_tBtn_Process_clicked(); break;
-        case 2: emit signal_tBtn_Analysis_clicked(); break;
-        case 3: emit signal_tbtn_Report_clicked(); break;
+       // case 1: emit signal_tBtn_Process_clicked(); break;
+       // case 2: emit signal_tBtn_Analysis_clicked(); break;
+       // case 3: emit signal_tbtn_Report_clicked(); break;
         }
     });
 
     ui->tBtn_DataImport->setChecked(true);
+
+    auto *plotTools = new QWidget(this);
+    plotTools->setObjectName("plotTools");
+    plotTools->setStyleSheet(R"(
+        QWidget#plotTools {
+            background: transparent;
+        }
+        QToolButton {
+            color: #ffffff;
+            background: rgba(31, 101, 222, 0.18);
+            border: 1px solid rgba(2, 86, 255, 150);
+            border-radius: 4px;
+            padding: 4px 8px;
+            font: 10pt "微软雅黑";
+        }
+        QToolButton:hover {
+            background: rgb(2, 86, 200);
+            border-color: #4A9BFF;
+        }
+        QToolButton:pressed {
+            background: rgb(46, 79, 129);
+        }
+    )");
+
+    auto *plotToolsLayout = new QHBoxLayout(plotTools);
+    plotToolsLayout->setContentsMargins(8, 0, 8, 0);
+    plotToolsLayout->setSpacing(6);
+
+    auto *btnLfDas = new QToolButton(plotTools);
+    auto *btnFbe = new QToolButton(plotTools);
+    auto *btnDownsample = new QToolButton(plotTools);
+    auto *btnSpectrum = new QToolButton(plotTools);
+
+    btnLfDas->setText("LF-DAS");
+    btnFbe->setText("FBE");
+    btnDownsample->setText("降采样");
+    btnSpectrum->setText("频谱");
+
+    btnLfDas->setToolTip("打开多个 LF-DAS 文件");
+    btnFbe->setToolTip("打开多个 FBE 分频能量文件");
+    btnDownsample->setToolTip("打开多个降采样原始数据文件");
+    btnSpectrum->setToolTip("打开一个或多个 spectrum_db 频谱文件");
+
+    const QList<QToolButton*> buttons = {btnLfDas, btnFbe, btnDownsample, btnSpectrum};
+    const QList<QString> icons = {
+        ":/res/png/play.png",
+        ":/res/png/stop.png",
+        ":/res/png/play.png",
+        ":/res/png/pause.png"
+    };
+    for (int i = 0; i < buttons.size(); ++i) {
+        QToolButton *button = buttons[i];
+        button->setFixedHeight(28);
+        button->setMinimumWidth(64);
+        button->setIcon(QIcon(icons[i]));
+        button->setIconSize(QSize(16, 16));
+        button->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
+        button->setFocusPolicy(Qt::NoFocus);
+        plotToolsLayout->addWidget(button);
+    }
+
+    ui->horizontalLayout_2->insertWidget(1, plotTools);
+
+    connect(btnLfDas, &QToolButton::clicked, this, &TitleWdgt::signal_btn_OpenLfDas_clicked);
+    connect(btnFbe, &QToolButton::clicked, this, &TitleWdgt::signal_btn_OpenFbeEnergy_clicked);
+    connect(btnDownsample, &QToolButton::clicked, this, &TitleWdgt::signal_btn_OpenDownsample_clicked);
+    connect(btnSpectrum, &QToolButton::clicked, this, &TitleWdgt::signal_btn_OpenSpectrumDb_clicked);
 }
 
 //{"数据导入", "采集配置", "信号预处理", "智能监测与解释", "成果报告"};

@@ -68,8 +68,8 @@ LeftNavBar::LeftNavBar(QWidget *parent)
 
     // 点击业务按钮（通知外部切换 QStackedWidget）
     connect(navGroup, &QButtonGroup::idClicked, this, [this](int id) {
-        qDebug()<<"QButtonGroup::idClicked"<<id;
-        emit modulesChanged(id);
+        //qDebug()<<"QButtonGroup::idClicked"<<id;
+        //emit modulesChanged(id);
     });
 
     QString qss = R"(

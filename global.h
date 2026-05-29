@@ -2,7 +2,7 @@
 #define GLOBAL_H
 
 #include <QObject>
-//#include <Eigen/Dense>
+#include <Eigen/Dense>
 //#include <H5Cpp.h>
 //#include <fftw3.h>
 #include <omp.h>
@@ -15,7 +15,19 @@ public:
     Global();
 };
 
+using Matrix = Eigen::MatrixXf;
+using Vector = Eigen::VectorXf;
+
+QString selectFolder(QWidget* pWidget);
+
 bool createFullFilePath(const QString &fullPath);
+
+bool mergeSpectrumPowerToDb(const std::vector<std::string>& spectrumPowerFiles,
+                            const std::string& outDbFile,
+                            bool relativeDb = true,
+                            float eps = 1e-9f);
+
+bool saveBinary(const std::string& file, const Matrix& m);
 
 /*Eigen::MatrixXf readTimeSlice(const std::string& filename,
                               const std::string& dataset_name,

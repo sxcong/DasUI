@@ -42,7 +42,11 @@ private slots:
 private:
     void initTable(QTableWidget* table);
     void setupContextMenu(QTableWidget* table);
-     QWidget* createCustomRowWidget(const QString &fileName, const QString &fileSize, const QString &fileTime);
+    QWidget* createCustomRowWidget(const QString &fileName, const QString &fileSize, const QString &fileTime);
+    void openLfDasFiles(const QString& initialDir = QString());
+    void openFbeEnergyFiles(const QString& initialDir = QString());
+    void openDownsampleFiles(const QString& initialDir = QString());
+    void openSpectrumDbFiles(const QString& initialDir = QString());
 private:
     bool eventFilter(QObject *obj, QEvent *event) override;
     Ui::FileListWidget *ui;

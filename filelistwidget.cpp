@@ -25,7 +25,11 @@
 #include <QStyleFactory>
 #include <QMessageBox>
 #include "projectmgr.h"
-
+#include "spectrumanalysiswidget.h"
+#include "lfdaswidget.h"
+#include "fbeenergywidget.h"
+#include "downsamplewidget.h"
+#include "spectrumdbwidget.h"
 
 FileListWidget::FileListWidget(QWidget *parent)
     : QWidget(parent)
@@ -149,16 +153,12 @@ void FileListWidget::showGeneralContextMenu(QTableWidget* table, const QPoint &p
 
     QAction *act2 = new QAction("LF-DAS瀑布图", &menu);
     connect(act2, &QAction::triggered, this, [=]() {
-        //LF_DAS_Dlg dlg;
-
-        // dlg.setH5File(szFile);
-        // dlg.exec();
+        openLfDasFiles(QFileInfo(szFile).absolutePath());
     });
 
     QAction *act3 = new QAction("FBE分频能量瀑布图", &menu);
     connect(act3, &QAction::triggered, this, [=]() {
-        //FracturingDlg dlg;
-        //dlg.exec();
+        openFbeEnergyFiles(QFileInfo(szFile).absolutePath());
     });
 
     QAction *act4 = new QAction("F-K", &menu);
@@ -169,10 +169,22 @@ void FileListWidget::showGeneralContextMenu(QTableWidget* table, const QPoint &p
         // dlg.exec();
     });
 
+    QAction *act5 = new QAction("降采样原始数据图", &menu);
+    connect(act5, &QAction::triggered, this, [=]() {
+        openDownsampleFiles(QFileInfo(szFile).absolutePath());
+    });
+
+    QAction *act6 = new QAction("频谱图", &menu);
+    connect(act6, &QAction::triggered, this, [=]() {
+        openSpectrumDbFiles(QFileInfo(szFile).absolutePath());
+    });
+
     menu.addAction(act1);
     menu.addAction(act2);
     menu.addAction(act3);
     menu.addAction(act4);
+    menu.addAction(act5);
+    menu.addAction(act6);
 
 
     // 将点击位置 pos 转换为全局坐标
@@ -298,7 +310,7 @@ QWidget* FileListWidget::createCustomRowWidget(const QString &fileName, const QS
     // 3. 主布局 (水平布局)
     QHBoxLayout *mainLayout = new QHBoxLayout(container);
     //mainLayout->setContentsMargins(15, 10, 15, 10); // 左右留白
-    mainLayout->setContentsMargins(20, 0, 20, 0);
+    mainLayout->setContentsMargins(8, 0, 8, 0);
     mainLayout->setSpacing(20); // 各部分之间的间距
 
     // --- 左侧区域：图标 + 文件名 + 状态 ---
@@ -395,7 +407,7 @@ QWidget* FileListWidget::createCustomRowWidget(const QString &fileName, const QS
     QWidget *btnWidget = new QWidget();
     QHBoxLayout *btnLayout = new QHBoxLayout(btnWidget);
     btnLayout->setContentsMargins(0, 0, 0, 0);
-    btnLayout->setSpacing(10);
+    btnLayout->setSpacing(6);
     btnLayout->setAlignment(Qt::AlignCenter); // 按钮组在列内居中
 
     // 简单的按钮样式，防止按钮背景也是黑的看不见
@@ -412,10 +424,14 @@ QWidget* FileListWidget::createCustomRowWidget(const QString &fileName, const QS
     QToolButton *btn2 = new QToolButton(this);
     QToolButton *btn3 = new QToolButton(this);
     QToolButton *btn4 = new QToolButton(this);
+    QToolButton *btn5 = new QToolButton(this);
+    QToolButton *btn6 = new QToolButton(this);
     btn1->setToolTip("tip1");
     btn2->setToolTip("tip2");
-    btn3->setToolTip("tip3");
-    btn4->setToolTip("tip4");
+    btn3->setToolTip("LF-DAS瀑布图");
+    btn4->setToolTip("FBE分频能量瀑布图");
+    btn5->setToolTip("降采样原始数据图");
+    btn6->setToolTip("频谱图");
 
 
     connect(btn1, &QToolButton::clicked, this, [fileName, this]() {
@@ -427,18 +443,50 @@ QWidget* FileListWidget::createCustomRowWidget(const QString &fileName, const QS
     });
 
     connect(btn2, &QToolButton::clicked, this, [fileName, this]() {
-        QApplication::setOverrideCursor(Qt::WaitCursor);
+       // QApplication::setOverrideCursor(Qt::WaitCursor);
         QString folderPath = this->property("folderPath").toString();
         QString szFullFile = QDir::toNativeSeparators(QDir(folderPath).absoluteFilePath(fileName));
         // Open FBE Plot dialog
-        FbePlotDialog *dlg = new FbePlotDialog(szFullFile, this);
+        /*FbePlotDialog *dlg = new FbePlotDialog(szFullFile, this);
         dlg->setAttribute(Qt::WA_DeleteOnClose);
-        dlg->show();
-        QApplication::restoreOverrideCursor();
+        dlg->show();*/
+
+        SpectrumAnalysisWidget* pWidget = new SpectrumAnalysisWidget("d:/output/5/band_energy.merge.bin", "d:/output/5/spectrum.merge.bin", this);
+        pWidget->setAttribute(Qt::WA_DeleteOnClose);
+        pWidget->resize(1000, 600);
+        pWidget->exec();
+       // QApplication::restoreOverrideCursor();
     });
 
-    QList<QToolButton*> btnList = {btn1, btn2, btn3, btn4};
-    QList<QString> iconList = {":/res/png/play.png", ":/res/png/pause.png", ":/res/png/stop.png", ":/res/png/recyclebin.png"};
+    connect(btn3, &QToolButton::clicked, this, [this]() {
+        QString folderPath = this->property("folderPath").toString();
+        openLfDasFiles(folderPath);
+    });
+
+    connect(btn4, &QToolButton::clicked, this, [this]() {
+        QString folderPath = this->property("folderPath").toString();
+        openFbeEnergyFiles(folderPath);
+    });
+
+    connect(btn5, &QToolButton::clicked, this, [this]() {
+        QString folderPath = this->property("folderPath").toString();
+        openDownsampleFiles(folderPath);
+    });
+
+    connect(btn6, &QToolButton::clicked, this, [this]() {
+        QString folderPath = this->property("folderPath").toString();
+        openSpectrumDbFiles(folderPath);
+    });
+
+    QList<QToolButton*> btnList = {btn1, btn2, btn3, btn4, btn5, btn6};
+    QList<QString> iconList = {
+        ":/res/png/play.png",
+        ":/res/png/pause.png",
+        ":/res/png/stop.png",
+        ":/res/png/recyclebin.png",
+        ":/res/png/play.png",
+        ":/res/png/pause.png"
+    };
 
     for (int i=0; i<btnList.size(); ++i) {
         QToolButton *btn = btnList[i];
@@ -455,6 +503,8 @@ QWidget* FileListWidget::createCustomRowWidget(const QString &fileName, const QS
     btnLayout->addWidget(btn2);
     btnLayout->addWidget(btn3);
     btnLayout->addWidget(btn4);
+    btnLayout->addWidget(btn5);
+    btnLayout->addWidget(btn6);
 
 
 
@@ -468,4 +518,108 @@ QWidget* FileListWidget::createCustomRowWidget(const QString &fileName, const QS
     // 如果希望按钮靠最右，可以在左侧和大小之间加伸缩项，或者调整布局策略
     //  mainLayout->setStretch(0, 1); // 让左侧拉伸
     return container;
+}
+
+void FileListWidget::openLfDasFiles(const QString& initialDir)
+{
+    QString startDir = initialDir;
+    if (startDir.isEmpty()) {
+        startDir = this->property("folderPath").toString();
+    }
+    if (startDir.isEmpty()) {
+        startDir = QDir::homePath();
+    }
+
+    const QStringList files = QFileDialog::getOpenFileNames(
+        this,
+        "选择 LF-DAS 二进制文件",
+        startDir,
+        "LF-DAS Binary (*.lfdas *.bin);;All Files (*)");
+    if (files.isEmpty()) {
+        return;
+    }
+
+    auto* widget = new LfDasWidget();
+    widget->setAttribute(Qt::WA_DeleteOnClose);
+    widget->resize(1200, 720);
+    widget->setFiles(files);
+    widget->show();
+}
+
+void FileListWidget::openDownsampleFiles(const QString& initialDir)
+{
+    QString startDir = initialDir;
+    if (startDir.isEmpty()) {
+        startDir = this->property("folderPath").toString();
+    }
+    if (startDir.isEmpty()) {
+        startDir = QDir::homePath();
+    }
+
+    const QStringList files = QFileDialog::getOpenFileNames(
+        this,
+        "选择降采样二进制文件",
+        startDir,
+        "Downsample Binary (*.down);;Binary Files (*.bin);;All Files (*)");
+    if (files.isEmpty()) {
+        return;
+    }
+
+    auto* widget = new DownsampleWidget();
+    widget->setAttribute(Qt::WA_DeleteOnClose);
+    widget->resize(1200, 720);
+    widget->setFiles(files);
+    widget->show();
+}
+
+void FileListWidget::openSpectrumDbFiles(const QString& initialDir)
+{
+    QString startDir = initialDir;
+    if (startDir.isEmpty()) {
+        startDir = this->property("folderPath").toString();
+    }
+    if (startDir.isEmpty()) {
+        startDir = QDir::homePath();
+    }
+
+    const QStringList files = QFileDialog::getOpenFileNames(
+        this,
+        "选择 spectrum_db 二进制文件",
+        startDir,
+        "Spectrum DB (*.spectrum_db);;Binary Files (*.bin);;All Files (*)");
+    if (files.isEmpty()) {
+        return;
+    }
+
+    auto* widget = new SpectrumDbWidget();
+    widget->setAttribute(Qt::WA_DeleteOnClose);
+    widget->resize(1200, 720);
+    widget->setFiles(files);
+    widget->show();
+}
+
+void FileListWidget::openFbeEnergyFiles(const QString& initialDir)
+{
+    QString startDir = initialDir;
+    if (startDir.isEmpty()) {
+        startDir = this->property("folderPath").toString();
+    }
+    if (startDir.isEmpty()) {
+        startDir = QDir::homePath();
+    }
+
+    const QStringList files = QFileDialog::getOpenFileNames(
+        this,
+        "选择 FBE 分频能量二进制文件",
+        startDir,
+        "FBE Binary (*.fbe);;Binary Files (*.bin);;All Files (*)");
+    if (files.isEmpty()) {
+        return;
+    }
+
+    auto* widget = new FbeEnergyWidget();
+    widget->setAttribute(Qt::WA_DeleteOnClose);
+    widget->resize(1200, 720);
+    widget->setFiles(files);
+    widget->show();
 }

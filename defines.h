@@ -1,6 +1,16 @@
 #ifndef DEFINES_H
 #define DEFINES_H
 
+#include <Eigen/Dense>
+#include <string>
+
+using Matrix = Eigen::MatrixXf;
+using Vector = Eigen::VectorXf;
+using RowMajorMatrix = Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>;
+
+bool saveBinary(const std::string& file, const Matrix& m);
+bool loadBinary(const std::string& file, Matrix& m);
+
 class WaterFallConfig
 {
 public:

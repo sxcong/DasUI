@@ -43,6 +43,10 @@ signals:
     void signal_tBtn_Process_clicked();
     void signal_tBtn_Analysis_clicked();
     void signal_tbtn_Report_clicked();
+    void signal_btn_OpenLfDas_clicked();
+    void signal_btn_OpenFbeEnergy_clicked();
+    void signal_btn_OpenDownsample_clicked();
+    void signal_btn_OpenSpectrumDb_clicked();
 protected:
     void mousePressEvent(QMouseEvent *event);
     void mouseReleaseEvent(QMouseEvent *event);

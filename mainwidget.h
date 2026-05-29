@@ -24,6 +24,12 @@ public:
     explicit MainWidget(QWidget *parent = nullptr);
     ~MainWidget();
     void setIndex(int index);
+
+public slots:
+    void openLfDasFiles();
+    void openFbeEnergyFiles();
+    void openDownsampleFiles();
+    void openSpectrumDbFiles();
 private:
     Ui::MainWidget *ui;
     LeftNavBar *leftNavBar;

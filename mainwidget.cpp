@@ -58,3 +58,31 @@ void MainWidget::setIndex(int index)
     if (index >= 0 && index < rightStack->count())
         rightStack->setCurrentIndex(index);
 }
+
+void MainWidget::openLfDasFiles()
+{
+    if (m_pFileTreeListWidget) {
+        m_pFileTreeListWidget->openLfDasFilesFromCurrentFolder();
+    }
+}
+
+void MainWidget::openFbeEnergyFiles()
+{
+    if (m_pFileTreeListWidget) {
+        m_pFileTreeListWidget->openFbeEnergyFilesFromCurrentFolder();
+    }
+}
+
+void MainWidget::openDownsampleFiles()
+{
+    if (m_pFileTreeListWidget) {
+        m_pFileTreeListWidget->openDownsampleFilesFromCurrentFolder();
+    }
+}
+
+void MainWidget::openSpectrumDbFiles()
+{
+    if (m_pFileTreeListWidget) {
+        m_pFileTreeListWidget->openSpectrumDbFilesFromCurrentFolder();
+    }
+}

@@ -1,6 +1,7 @@
 #include "wellwidget.h"
 #include "ui_wellwidget.h"
 #include "chartselectwidget.h"
+#include "SpectrumAnalysisWidget.h"
 
 WellWidget::WellWidget(QWidget *parent)
     : QWidget(parent)
